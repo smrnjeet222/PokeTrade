@@ -1,0 +1,10 @@
+{
+  "name": "poketrade",
+  "version": "1.0.0",
+  "private": "true",
+  "workspaces": [
+    "app/",
+    "contract/",
+    "subgraph/"
+  ]
+}

@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .retro {
+    @apply border-2 border-black rounded-md shadow-[-5px_5px_0px_0px_rgba(0,0,0)];
+  }
+
+  .retro-btn {
+    @apply py-2 px-4 w-max cursor-pointer border-2 border-black rounded-md shadow-[-5px_5px_0px_0px_rgba(0,0,0)] active:hover:shadow-none hover:active:translate-y-1 duration-300;
+  }
+}
+
+@layer components {
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
