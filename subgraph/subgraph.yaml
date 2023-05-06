@@ -6,9 +6,9 @@ dataSources:
     name: PokeMarketPlace
     network: mumbai
     source:
-      address: "0x3b90c0bd38f22f78d0e575E39cF6C7b01b116884"
+      address: "0xA955CF44458920988097dCAe0e642C468d54b80F"
       abi: PokeMarketPlace
-      startBlock: 35213457
+      startBlock: 35246814
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

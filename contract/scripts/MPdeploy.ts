@@ -10,7 +10,6 @@ async function main() {
 
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
 
-
   const vaultInterface = new ethers.utils.Interface([
       "function initialize( uint256 _platformFees, address _admin) external"
   ])
@@ -19,7 +18,6 @@ async function main() {
   console.log(PokeMarketPlace.address, owner.address, data);
   const pokeProxy = await pokeMarketProxy.deploy(PokeMarketPlace.address, owner.address, data);
   await pokeProxy.deployed();
-
 
 
   console.log("Proxy deployed to:", pokeProxy.address);

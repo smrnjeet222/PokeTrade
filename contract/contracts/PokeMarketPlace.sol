@@ -16,7 +16,6 @@ contract PokeMarketPlace is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     address payable public adminOwner;
-    bool isPaused = false;
 
     struct Order {
         uint256 tokenId;
