@@ -131,7 +131,7 @@ const MyCollection = () => {
     <div className="container m-auto">
       <div className="hero p-10">
         <div className="hero-content flex-col text-center">
-          <h1 className="text-5xl font-bold">Your NFTs Collection</h1>
+          <h1 className="text-5xl font-bold">Your Poke NFT Collection</h1>
           <div className="text-sm breadcrumbs">
             <ul>
               <li>Home</li>
