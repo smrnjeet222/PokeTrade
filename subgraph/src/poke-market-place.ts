@@ -54,6 +54,7 @@ export function handleOrderPurchase(event: OrderPurchasedEvent): void {
     order.save();
     purchase.copies = event.params.copies;
     purchase.buyer = event.params.buyer.toHex();
+    purchase.order = orderId
     purchase.save();
   }
 }
@@ -88,6 +89,7 @@ export function handleBidAccepted(event: BidAcceptedEvent): void {
     order.save();
     purchase.copies = event.params.copies;
     purchase.buyer = bid.bidder;
+    purchase.order = orderId;
     purchase.save();
 
     bid.status = 1;

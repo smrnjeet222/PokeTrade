@@ -10,7 +10,7 @@
 #   Withdraw
 # }
 
-type Order @entity(immutable: true) {
+type Order @entity {
   id: ID!
   tokenId: BigInt!
   price: BigInt!
@@ -25,7 +25,7 @@ type Order @entity(immutable: true) {
   bids: [Bid!]! @derivedFrom(field: "order")
 }
 
-type Bid @entity(immutable: true) {
+type Bid @entity {
   id: ID!
   bidder: String!
   copies: Int!
@@ -35,7 +35,7 @@ type Bid @entity(immutable: true) {
   order: Order!
 }
 
-type Purchase @entity(immutable: true) {
+type Purchase @entity {
   id: ID!
   order: Order!
   copies: Int!
