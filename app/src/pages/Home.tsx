@@ -45,6 +45,7 @@ const GET_OPEN_ORDERS = gql`
       orderDirection: desc
       where: {
         copies_gt: 0
+        status: true
         nftContract_in: ["0x8f8a6e7eaf05eb72f9e8a8c351e00da5a54ce305"]
       }
     ) {
