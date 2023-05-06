@@ -45,13 +45,9 @@ function BuyNowTab({ nft, nftName }: any) {
         signer
       );
 
-      const buyTx = await marketPlaceContract.buyNow(
-        nft.id,
-        buyingQuantity,
-        {
-          value: new Decimal(nft.price).mul(buyingQuantity).toString(),
-        }
-      );
+      const buyTx = await marketPlaceContract.buyNow(nft.id, buyingQuantity, {
+        value: new Decimal(nft.price).mul(buyingQuantity).toString(),
+      });
       await buyTx.wait();
       setBuyingState({ loading: false, error: null, hash: buyTx.hash });
     } catch (err) {
@@ -282,11 +278,10 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         <Tab
           className={({ selected }) =>
             classNames(
-              "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-secondary",
-              "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+              "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
               selected
-                ? "bg-white shadow"
-                : "text-base-300 hover:bg-white/[0.12] !disabled:hover:text-secondary"
+                ? "bg-info-content shadow text-neutral-focus"
+                : "text-neutral not:disable:hover:bg-white/[0.12] disabled:text-base-300"
             )
           }
           disabled={onlyBids}
@@ -296,11 +291,10 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         <Tab
           className={({ selected }) =>
             classNames(
-              "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-secondary",
-              "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+              "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
               selected
-                ? "bg-white shadow"
-                : "text-base-300 hover:bg-white/[0.12] hover:text-secondary"
+                ? "bg-info-content shadow text-neutral-focus"
+                : "text-neutral hover:bg-white/[0.12]"
             )
           }
         >
@@ -401,98 +395,101 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
             <br />
             <button
               disabled={buyingState.loading}
-              className="btn btn-secondary w-full disabled:loading"
+              className="retro-btn bg-white w-full disabled:loading"
               onClick={handlePlaceOffer}
             >
               Place Offer
             </button>
           </>
         </Tab.Panel>
-        <Tab.Panel className="flex flex-col mt-4 text-center gap-2 overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th className="normal-case">Bidder</th>
-                <th className="flex gap-2 items-center normal-case">
-                  Price
-                  <svg viewBox="0 0 38.4 33.5" className="w-3 h-3">
-                    <path
-                      fill="#8247E5"
-                      d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3   c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-                    />
-                  </svg>
-                </th>
-                <th className="normal-case">Copies</th>
-                <th className="normal-case text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {!nft.bids.length ? (
-                <tr className="border text-error">
-                  <td> No Open Bids </td>
+        <Tab.Panel className="mt-4">
+          <div className="flex flex-col my-4 text-center gap-2 overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th className="normal-case">Bidder</th>
+                  <th className="flex gap-2 items-center normal-case">
+                    Price
+                    <svg viewBox="0 0 38.4 33.5" className="w-3 h-3">
+                      <path
+                        fill="#8247E5"
+                        d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3   c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
+                      />
+                    </svg>
+                  </th>
+                  <th className="normal-case">Copies</th>
+                  <th className="normal-case text-center">Actions</th>
                 </tr>
-              ) : (
-                nft.bids.map((bid: any) => (
-                  <tr key={bid.id} className="border">
-                    <td>
-                      {bid.bidder.substring(0, 4)}...
-                      {bid.bidder.substring(bid.bidder.length - 6)}
-                    </td>
-                    <td>
-                      {new Decimal(bid.price ?? 0)
-                        .div(new Decimal(10).pow(18))
-                        .toString()}
-                    </td>
-                    <td>{bid.copies}</td>
-                    <td>
-                      <div className="flex gap-2 justify-center">
-                        {ethers.utils.getAddress(bid.bidder) ===
-                          ethers.utils.getAddress(address!) && (
-                          <button
-                            className="btn btn-xs btn-secondary btn-outline normal-case disabled:loading"
-                            disabled={buyingState.loading}
-                            onClick={() =>
-                              handleWithdrawBid(bid.id.split("-")[1])
-                            }
-                          >
-                            Withdraw
-                          </button>
-                        )}
-                        {ethers.utils.getAddress(nft.seller) ===
-                          ethers.utils.getAddress(address!) && (
-                          <>
-                            <button
-                              className="btn btn-xs btn-secondary btn-outline normal-case disabled:loading"
-                              disabled={buyingState.loading}
-                              onClick={() =>
-                                handleAcceptBid(bid.id.split("-")[1])
-                              }
-                            >
-                              Accept
-                            </button>
-                            <button
-                              className="btn btn-xs btn-accent btn-outline normal-case disabled:loading"
-                              disabled={buyingState.loading}
-                              onClick={() =>
-                                handleRejectBid(bid.id.split("-")[1])
-                              }
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
+              </thead>
+              <tbody>
+                {!nft.bids.length ? (
+                  <tr className="border border-base-200 text-error">
+                    <td> No Open Bids </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  nft.bids.map((bid: any) => (
+                    <tr key={bid.id} className="border border-base-200">
+                      <td>
+                        {bid.bidder.substring(0, 4)}...
+                        {bid.bidder.substring(bid.bidder.length - 6)}
+                      </td>
+                      <td>
+                        {new Decimal(bid.price ?? 0)
+                          .div(new Decimal(10).pow(18))
+                          .toString()}
+                      </td>
+                      <td>{bid.copies}</td>
+                      <td>
+                        <div className="flex gap-2 justify-center">
+                          {ethers.utils.getAddress(bid.bidder) ===
+                            ethers.utils.getAddress(address!) && (
+                            <button
+                              className="btn btn-xs btn-secondary normal-case disabled:loading"
+                              disabled={buyingState.loading}
+                              onClick={() =>
+                                handleWithdrawBid(bid.id.split("-")[1])
+                              }
+                            >
+                              Withdraw
+                            </button>
+                          )}
+                          {ethers.utils.getAddress(nft.seller) ===
+                            ethers.utils.getAddress(address!) && (
+                            <>
+                              <button
+                                className="btn btn-xs btn-secondary normal-case disabled:loading"
+                                disabled={buyingState.loading}
+                                onClick={() =>
+                                  handleAcceptBid(bid.id.split("-")[1])
+                                }
+                              >
+                                Accept
+                              </button>
+                              <button
+                                className="btn btn-xs btn-primary normal-case disabled:loading"
+                                disabled={buyingState.loading}
+                                onClick={() =>
+                                  handleRejectBid(bid.id.split("-")[1])
+                                }
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
           {ethers.utils.getAddress(nft.seller) ===
             ethers.utils.getAddress(address!) && (
             <button
               disabled={buyingState.loading}
-              className="btn btn-accent w-full disabled:loading"
+              className="retro-btn bg-white w-full disabled:loading"
               onClick={() => handleOrderCancel(nft.id)}
             >
               Cancel Order
@@ -616,7 +613,6 @@ function BuyCard({ nft }: any) {
   }
 
   function openModal() {
-    console.log(nft);
     setOnlyBids(false);
     setIsOpen(true);
   }
@@ -652,14 +648,22 @@ function BuyCard({ nft }: any) {
 
       <div
         className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
-      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-gray-300 "
+      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-base-300 "
       >
         <div
-          className="bg-white bg-opacity-50 backdrop-blur-sm
-        absolute top-0 right-0 text-center p-1 rounded-bl-xl
+          className="bg-base-100 bg-opacity-50 backdrop-blur-sm
+        absolute top-0 right-0 text-center p-1 rounded-bl-xl border-l border-b border-base-300
         flex items-center"
         >
-          <span className="font-semibold">&nbsp;{nft.copies}</span>
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+            <path
+              fillRule="evenodd"
+              d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z"
+              clipRule="evenodd"
+            />
+          </svg>
+
+          <span className="text-lg mx-2">&nbsp;{nft.copies}</span>
         </div>
         <figure className="min-h-[20rem] max-h-[26rem]">
           <img
@@ -669,7 +673,7 @@ function BuyCard({ nft }: any) {
         </figure>
 
         <div
-          className="card-body w-full !p-2 !gap-1 absolute bg-gray-200 
+          className="card-body w-full !p-2 !gap-1 absolute bg-base-100 
         bg-opacity-70 bottom-0 backdrop-blur-sm"
         >
           <h2 className="card-title">{nftData.name}</h2>
@@ -720,14 +724,14 @@ function BuyCard({ nft }: any) {
                 ethers.utils.getAddress(nft.seller) ===
                   ethers.utils.getAddress(address) ? (
                   <button
-                    className="btn btn-sm btn-accent normal-case"
+                    className="btn btn-sm btn-primary border-primary-focus normal-case"
                     onClick={() => handleOrderCancel(nft.id)}
                   >
                     Cancel Order
                   </button>
                 ) : (
                   <button
-                    className="btn btn-sm btn-primary normal-case"
+                    className="btn btn-sm btn-secondary border-secondary-focus  normal-case"
                     onClick={openModal}
                   >
                     Buy Now
@@ -737,7 +741,7 @@ function BuyCard({ nft }: any) {
                 ethers.utils.getAddress(nft.seller) ===
                   ethers.utils.getAddress(address) ? (
                 <button
-                  className="btn btn-sm btn-accent normal-case"
+                  className="btn btn-sm btn-accent border-accent-focus normal-case"
                   onClick={() => {
                     openModal();
                     setOnlyBids(true);
@@ -747,7 +751,7 @@ function BuyCard({ nft }: any) {
                 </button>
               ) : Date.now() > nft.endTime ? (
                 <button
-                  className="btn btn-sm btn-warning normal-case"
+                  className="btn btn-sm btn-warning border-warning-focus normal-case"
                   onClick={() => {
                     openModal();
                     setOnlyBids(true);
@@ -757,7 +761,7 @@ function BuyCard({ nft }: any) {
                 </button>
               ) : (
                 <button
-                  className="btn btn-sm btn-secondary normal-case"
+                  className="btn btn-sm btn-secondary border-secondary-focus normal-case"
                   onClick={openModal}
                 >
                   Place Offer

@@ -352,7 +352,7 @@ function SellModal({
                           "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
                           selected
                             ? "bg-info-content shadow text-neutral-focus"
-                            : "text-base-300 hover:bg-white/[0.12]"
+                            : "text-neutral hover:bg-white/[0.12]"
                         )
                       }
                     >
@@ -364,7 +364,7 @@ function SellModal({
                           "w-full rounded-lg py-2.5 text-sm font-medium leading-5 ",
                           selected
                             ? "bg-info-content shadow text-neutral-focus"
-                            : "text-base-300 hover:bg-white/[0.12]"
+                            : "text-neutral hover:bg-white/[0.12]"
                         )
                       }
                     >
@@ -464,13 +464,13 @@ function SellCard({ nftBalance, tokenId, contract, abi }: any) {
       {/* Card  */}
       <div
         className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
-      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-gray-300"
+      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-base-300"
       >
         <figure className="min-h-[20rem] max-h-[26rem]">
           <img src={getCustomIpfsUrl(nftData.image)} className="object-cover" />
         </figure>
         <div
-          className="card-body w-full !p-4 !pt-2 !gap-1 absolute bg-gray-200 
+          className="card-body w-full !p-4 !pt-2 !gap-1 absolute bg-base-100 
         bg-opacity-70 bottom-0 backdrop-blur-sm "
         >
           <h2 className="card-title items-baseline">
