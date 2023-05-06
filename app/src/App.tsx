@@ -9,6 +9,7 @@ import { polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import MyCollection from "./pages/MyCollection";
 
 const { provider } = configureChains([polygonMumbai], [publicProvider()]);
 
@@ -29,6 +30,7 @@ const App = () => {
         <div className="divider my-0" />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/my-collection" element={<MyCollection />} />
         </Routes>
       </ConnectKitProvider>
     </WagmiConfig>
