@@ -309,7 +309,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         <div className="flex m-2 justify-between items-baseline">
           <span className="text-xs">Bid End Time</span>
           <span className="text-lg font-medium">
-            {new Date(Number(nft.endTime)).toLocaleString()}
+            {new Date(Number(nft.endTime * 100)).toLocaleString()}
           </span>
         </div>
         <Tab.Panel className="mt-4">
@@ -676,7 +676,10 @@ function BuyCard({ nft }: any) {
           className="card-body w-full !p-2 !gap-1 absolute bg-base-100 
         bg-opacity-70 bottom-0 backdrop-blur-sm"
         >
-          <h2 className="card-title">{nftData.name}</h2>
+          <h2 className="card-title items-end justify-between">
+            {nftData.name}
+            <span className="text-xs">#{nft.tokenId}&nbsp;</span>
+          </h2>
           <div className="divider h-1 m-0 opacity-30" />
           <div className="flex gap-3 items-center justify-between">
             <span className="text-xs">Owner :</span>
@@ -692,7 +695,7 @@ function BuyCard({ nft }: any) {
                 <p className="text-xs">Bidding Ends :</p>
                 <Countdown
                   key={nft.id}
-                  date={Number(nft.endTime)}
+                  date={Number(nft.endTime * 100)}
                   zeroPadDays={2}
                   autoStart
                   renderer={renderer}
@@ -749,7 +752,7 @@ function BuyCard({ nft }: any) {
                 >
                   Handle Order
                 </button>
-              ) : Date.now() > nft.endTime ? (
+              ) : Date.now() / 100 > nft.endTime ? (
                 <button
                   className="btn btn-sm btn-warning border-warning-focus normal-case"
                   onClick={() => {

@@ -41,7 +41,7 @@ const GET_OPEN_ORDERS = gql`
   query GetOpenOrders {
     orders(
       first: 50
-      orderBy: id
+      orderBy: startTime
       orderDirection: desc
       where: {
         copies_gt: 0
