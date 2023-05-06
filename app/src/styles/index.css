@@ -10,6 +10,26 @@
   .retro-btn {
     @apply py-2 px-4 w-max cursor-pointer border-2 border-black rounded-md shadow-[-5px_5px_0px_0px_rgba(0,0,0)] active:hover:shadow-none hover:active:translate-y-1 duration-300;
   }
+  html,
+  body {
+    @apply bg-neutral-content;
+  }
+
+  .navbar-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    animation: moveDown 0.5s ease-in-out;
+  }
+
+  @keyframes moveDown {
+    from {
+      transform: translateY(-5rem);
+    }
+    to {
+      transform: translateY(0rem);
+    }
+  }
 }
 
 @layer components {

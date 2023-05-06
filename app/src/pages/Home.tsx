@@ -1,20 +1,16 @@
+import { gql } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import BuyOrderGrid from "../components/BuyOrderGrid";
 
 const Home = () => {
-  const { address, connector, isConnecting, isDisconnected, isConnected } =
-    useAccount();
-  const [collections, setCollections] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!connector) return;
-    setLoading(true);
-    (async () => {
-      const signer = await connector?.getSigner();
-      setLoading(false);
-    })();
-  }, [connector]);
+  const {
+    address,
+    connector,
+    isConnecting,
+    isDisconnected,
+    isConnected,
+  } = useAccount();
 
   if (isConnecting)
     return (
@@ -29,27 +25,48 @@ const Home = () => {
       </div>
     );
   return (
-    <div className={`container m-auto ${loading ? "my-0" : "my-6"}`}>
-      {loading && <progress className="progress my-1"></progress>}
-
-      <div className="flex justify-between items-center">
+    <div className="container m-auto">
+      <div className="flex justify-between items-center mb-12 mt-6">
         <h3 className="text-3xl font-black">Latest NFTs</h3>
       </div>
-      <div className="my-8 grid grid-flow-row gap-6 text-neutral-600 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {/* {collections.map((c) => (
-          <Card key={c} collection={c} />
-        ))} */}
-      </div>
-      <div className="flex justify-between items-center">
-        <h3 className="text-3xl font-black">Ofers Ending Soon </h3>
-      </div>
-      <div className="my-8 grid grid-flow-row gap-6 text-neutral-600 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {/* {collections.map((c) => (
-          <Card key={c} collection={c} />
-        ))} */}
-      </div>
+      <BuyOrderGrid gql={GET_OPEN_ORDERS} />
+      <div className="m-32" />
     </div>
   );
 };
 
 export default Home;
+
+const GET_OPEN_ORDERS = gql`
+  query GetOpenOrders {
+    orders(
+      first: 50
+      orderBy: id
+      orderDirection: desc
+      where: {
+        copies_gt: 0
+        nftContract_in: ["0x8f8a6e7eaf05eb72f9e8a8c351e00da5a54ce305"]
+      }
+    ) {
+      id
+      price
+      seller
+      saleType
+      startTime
+      endTime
+      tokenId
+      copies
+      status
+      paymentToken
+      nftContract
+      bids(orderBy: timestamp, orderDirection: desc, where: { status: 0 }) {
+        bidder
+        price
+        status
+        timestamp
+        copies
+        id
+      }
+    }
+  }
+`;

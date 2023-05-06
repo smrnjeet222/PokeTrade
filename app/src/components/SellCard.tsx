@@ -142,7 +142,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
       <br />
       <button
         disabled={isSelling}
-        className="btn btn-primary w-full disabled:loading"
+        className="retro-btn flex-1 bg-white w-full disabled:loading"
         onClick={handleFixedPriceSell}
       >
         Sell Nft
@@ -195,7 +195,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         price.toString(),
         "0x0000000000000000000000000000000000000000",
         Date.parse(endTime),
-        "2"
+        "1"
       );
       await sellTx.wait();
       setIsSelling(false);
@@ -278,7 +278,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
       <br />
       <button
         disabled={isSelling}
-        className="btn btn-primary w-full disabled:loading"
+        className="retro-btn bg-white w-full disabled:loading"
         onClick={handleOpenBidSell}
       >
         Sell Nft
@@ -402,13 +402,7 @@ function SellModal({
 }
 
 function SellCard({ nftBalance, tokenId, contract, abi }: any) {
-  const {
-    address,
-    connector,
-    isConnecting,
-    isDisconnected,
-    isConnected,
-  } = useAccount();
+  const { address, connector } = useAccount();
   const [isOpen, setIsOpen] = useState(false);
   const [nftData, setNftData] = useState<NftData>({
     name: "",
@@ -469,15 +463,15 @@ function SellCard({ nftBalance, tokenId, contract, abi }: any) {
 
       {/* Card  */}
       <div
-        className="card card-compact card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
-      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-gray-300 "
+        className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
+      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-gray-300"
       >
         <figure className="min-h-[20rem] max-h-[26rem]">
           <img src={getCustomIpfsUrl(nftData.image)} className="object-cover" />
         </figure>
         <div
-          className="card-body w-full !p-2 !gap-1 absolute bg-gray-200 
-        bg-opacity-70 bottom-0 backdrop-blur-sm"
+          className="card-body w-full !p-4 !pt-2 !gap-1 absolute bg-gray-200 
+        bg-opacity-70 bottom-0 backdrop-blur-sm "
         >
           <h2 className="card-title items-baseline">
             <span className="text-xs">#{tokenId}&nbsp;</span>
@@ -489,7 +483,7 @@ function SellCard({ nftBalance, tokenId, contract, abi }: any) {
           <div className="flex gap-4 justify-between">
             <button
               onClick={openModal}
-              className="flex-1 btn btn-sm modal-button btn-primary mt-3 normal-case"
+              className="retro-btn flex-1 bg-white mt-3 normal-case"
             >
               Sell
             </button>
