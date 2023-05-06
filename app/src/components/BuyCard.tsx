@@ -148,11 +148,10 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         signer
       );
 
-      console.log(nft);
       let price = new Decimal(buyBid);
       price = price.mul(new Decimal(10).pow(18));
 
-      const buyTx = await marketPlaceContract.nativePlaceOfferForOrder(
+      const buyTx = await marketPlaceContract.placeOfferForOrder(
         nft.id,
         buyingQuantity,
         price.toString(),
@@ -683,7 +682,7 @@ function BuyCard({ nft }: any) {
             </span>
           </div>
           <div className="divider h-1 m-0 opacity-30" />
-          {nft.saleType === 2 && (
+          {nft.saleType === 1 && (
             <>
               <div className="flex items-baseline justify-between">
                 <p className="text-xs">Bidding Ends :</p>

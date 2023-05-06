@@ -66,6 +66,7 @@ export function handleBidPlace(event: BidPlacedEvent): void {
   const bid = Bid.load(orderId + "-" + bidId);
   if (!bid) {
     let newBid = new Bid(orderId + "-" + bidId);
+    newBid.bidder = event.params.bidder.toHex();
     newBid.copies = event.params.copies;
     newBid.price = event.params.pricePerNft;
     newBid.timestamp = event.params.bidTime;
