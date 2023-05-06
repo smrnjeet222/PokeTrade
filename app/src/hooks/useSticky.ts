@@ -14,16 +14,18 @@ function useSticky() {
   }
 
   // This function handles the scroll performance issue
-  const debounce = (func, wait = 20, immediate = true) => {
-    let timeOut: string | number | NodeJS.Timeout;
+  const debounce = (func: any, wait = 20, immediate = true) => {
+    let timeOut: string | number | NodeJS.Timeout | undefined;
     return () => {
       const later = () => {
-        timeOut = null
+        timeOut = undefined
+        // @ts-ignore
         if (!immediate) func.apply(this, arguments)
       }
       const callNow = immediate && !timeOut
       clearTimeout(timeOut)
       timeOut = setTimeout(later, wait)
+      // @ts-ignore
       if (callNow) func.apply(this, arguments)
     }
   }
