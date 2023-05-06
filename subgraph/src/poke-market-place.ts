@@ -9,10 +9,8 @@ import {
 } from "../generated/PokeMarketPlace/PokeMarketPlace"
 
 import { Order, Bid, Purchase } from "../generated/schema"
-import { BigInt, Address, log, store } from '@graphprotocol/graph-ts';
 
 export function handleOrderCreate(event: OrderCreatedEvent): void {
-
   const orderId = event.params.orderId.toString();
 
   const order = Order.load(orderId);
@@ -28,11 +26,9 @@ export function handleOrderCreate(event: OrderCreatedEvent): void {
     OrderInfo.copies = event.params.copies;
     OrderInfo.paymentToken = event.params.paymentToken.toHex();
     OrderInfo.nftContract = event.params.nftContract.toHex();
-    OrderInfo.status = 1;
+    OrderInfo.status = true;
     OrderInfo.save();
   }
-
-
 }
 
 export function handleOrderCancel(event: OrderCancelledEvent): void {
@@ -41,28 +37,25 @@ export function handleOrderCancel(event: OrderCancelledEvent): void {
   const order = Order.load(orderId);
 
   if (order) {
-    order.status = 0;
+    order.status = false;
     order.save();
   }
 }
 
 export function handleOrderPurchase(event: OrderPurchasedEvent): void {
-
   const orderId = event.params.orderId.toString();
 
   const order = Order.load(orderId);
 
   if (order) {
     const purchase = new Purchase(orderId + "-" + order.copies.toString() + "-" + event.params.copies.toString());
+    order.status = !!(order.copies - event.params.copies);
     order.copies -= event.params.copies;
-    order.status = 0;
     order.save();
     purchase.copies = event.params.copies;
     purchase.buyer = event.params.buyer.toHex();
     purchase.save();
   }
-
-
 }
 
 export function handleBidPlace(event: BidPlacedEvent): void {
@@ -83,10 +76,20 @@ export function handleBidPlace(event: BidPlacedEvent): void {
 
 export function handleBidAccepted(event: BidAcceptedEvent): void {
   const orderId = event.params.orderId.toString();
+  const order = Order.load(orderId);
+
   const bidId = event.params.bidId.toString();
   const bid = Bid.load(orderId + "-" + bidId);
 
-  if (bid) {
+  if (order && bid) {
+    const purchase = new Purchase(orderId + "-" + order.copies.toString() + "-" + event.params.copies.toString());
+    order.status = !!(order.copies - event.params.copies);
+    order.copies -= event.params.copies;
+    order.save();
+    purchase.copies = event.params.copies;
+    purchase.buyer = bid.bidder;
+    purchase.save();
+
     bid.status = 1;
     bid.save();
   }

@@ -31,30 +31,8 @@ export class BidAccepted__Params {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get copies(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class BidExpired extends ethereum.Event {
-  get params(): BidExpired__Params {
-    return new BidExpired__Params(this);
-  }
-}
-
-export class BidExpired__Params {
-  _event: BidExpired;
-
-  constructor(event: BidExpired) {
-    this._event = event;
-  }
-
-  get orderId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get bidId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get copies(): i32 {
+    return this._event.parameters[2].value.toI32();
   }
 }
 

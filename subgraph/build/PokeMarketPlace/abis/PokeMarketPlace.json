@@ -16,31 +16,12 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "uint16",
         "name": "copies",
-        "type": "uint256"
+        "type": "uint16"
       }
     ],
     "name": "BidAccepted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "orderId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "bidId",
-        "type": "uint256"
-      }
-    ],
-    "name": "BidExpired",
     "type": "event"
   },
   {

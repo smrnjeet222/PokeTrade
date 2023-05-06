@@ -82,7 +82,7 @@ contract PokeMarketPlace is
     );
     event BidWithdraw(uint256 indexed orderId, uint256 bidId);
     event BidRejected(uint256 indexed orderId, uint256 bidId);
-    event BidAccepted(uint256 indexed orderId, uint256 bidId, uint256 copies);
+    event BidAccepted(uint256 indexed orderId, uint256 bidId, uint16 copies);
     event NFTBulkBuy(uint256[] orderIds, uint256[] copies);
 
     function initialize(

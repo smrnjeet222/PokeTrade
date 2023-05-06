@@ -33,10 +33,10 @@ dataSources:
           handler: handleOrderPurchase
         - event: BidPlaced(indexed uint256,uint256,address,uint16,uint256,uint256)
           handler: handleBidPlace
+        - event: BidAccepted(indexed uint256,uint256,uint16)
+          handler: handleBidAccepted
         - event: BidWithdraw(indexed uint256,uint256)
           handler: handleBidWithdraw
         - event: BidRejected(indexed uint256,uint256)
           handler: handleBidReject
-        - event: BidAccepted(indexed uint256,uint256,uint256)
-          handler: handleBidAccepted
       file: ./src/poke-market-place.ts

@@ -2,6 +2,9 @@
   "name": "poketrade-contract",
   "private": true,
   "version": "1.0.0",
+  "scripts": {
+    "compile": "hardhat compile"
+  },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",

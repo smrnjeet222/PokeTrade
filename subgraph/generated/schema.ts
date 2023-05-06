@@ -46,6 +46,19 @@ export class Order extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
   get price(): BigInt {
     let value = this.get("price");
     if (!value || value.kind == ValueKind.NULL) {
@@ -70,6 +83,19 @@ export class Order extends Entity {
 
   set seller(value: string) {
     this.set("seller", Value.fromString(value));
+  }
+
+  get copies(): i32 {
+    let value = this.get("copies");
+    if (!value || value.kind == ValueKind.NULL) {
+      return 0;
+    } else {
+      return value.toI32();
+    }
+  }
+
+  set copies(value: i32) {
+    this.set("copies", Value.fromI32(value));
   }
 
   get saleType(): i32 {
@@ -111,45 +137,6 @@ export class Order extends Entity {
     this.set("endTime", Value.fromBigInt(value));
   }
 
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
-  }
-
-  get copies(): i32 {
-    let value = this.get("copies");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
-  }
-
-  set copies(value: i32) {
-    this.set("copies", Value.fromI32(value));
-  }
-
-  get status(): i32 {
-    let value = this.get("status");
-    if (!value || value.kind == ValueKind.NULL) {
-      return 0;
-    } else {
-      return value.toI32();
-    }
-  }
-
-  set status(value: i32) {
-    this.set("status", Value.fromI32(value));
-  }
-
   get paymentToken(): string {
     let value = this.get("paymentToken");
     if (!value || value.kind == ValueKind.NULL) {
@@ -174,6 +161,19 @@ export class Order extends Entity {
 
   set nftContract(value: string) {
     this.set("nftContract", Value.fromString(value));
+  }
+
+  get status(): boolean {
+    let value = this.get("status");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set status(value: boolean) {
+    this.set("status", Value.fromBoolean(value));
   }
 
   get bids(): Array<string> {
@@ -219,6 +219,19 @@ export class Bid extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get bidder(): string {
+    let value = this.get("bidder");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set bidder(value: string) {
+    this.set("bidder", Value.fromString(value));
   }
 
   get copies(): i32 {
@@ -322,8 +335,8 @@ export class Purchase extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get orderId(): string {
-    let value = this.get("orderId");
+  get order(): string {
+    let value = this.get("order");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
@@ -331,8 +344,8 @@ export class Purchase extends Entity {
     }
   }
 
-  set orderId(value: string) {
-    this.set("orderId", Value.fromString(value));
+  set order(value: string) {
+    this.set("order", Value.fromString(value));
   }
 
   get copies(): i32 {

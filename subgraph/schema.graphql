@@ -1,33 +1,33 @@
-enum SaleType {
-  BuyNow
-  OpenForOffers
-}
+# enum SaleType {
+#   BuyNow
+#   OpenForOffers
+# }
 
-enum BidStatus {
-  Placed
-  Accepted
-  Rejected
-  Withdraw
-  Expired
-}
+# enum BidStatus {
+#   Placed
+#   Accepted
+#   Rejected
+#   Withdraw
+# }
 
 type Order @entity(immutable: true) {
   id: ID!
+  tokenId: BigInt!
   price: BigInt!
   seller: String!
+  copies: Int!
   saleType: Int!
   startTime: BigInt!
   endTime: BigInt!
-  tokenId: BigInt!
-  copies: Int!
-  status: Int!
   paymentToken: String!
   nftContract: String!
+  status: Boolean!
   bids: [Bid!]! @derivedFrom(field: "order")
 }
 
 type Bid @entity(immutable: true) {
   id: ID!
+  bidder: String!
   copies: Int!
   price: BigInt!
   timestamp: BigInt!
@@ -35,9 +35,9 @@ type Bid @entity(immutable: true) {
   order: Order!
 }
 
-type Purchase @entity {
+type Purchase @entity(immutable: true) {
   id: ID!
-  orderId: Order!
+  order: Order!
   copies: Int!
   buyer: String!
 }
