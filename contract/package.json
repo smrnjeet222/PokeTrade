@@ -6,6 +6,7 @@
     "compile": "hardhat compile",
     "local-node": "hardhat node",
     "deployMP-local": "hardhat run --network localhost scripts/MPdeploy.ts",
+    "test": "hardhat test",
     "deployMP-mumbai": "hardhat run --network mumbai scripts/MPdeploy.ts",
     "upgradeMP-mumbai": "hardhat run --network mumbai scripts/MPupgrade.ts",
     "verify": "hardhat verify --network mumbai"
