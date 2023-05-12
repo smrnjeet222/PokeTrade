@@ -20,6 +20,14 @@ async function main() {
   await PokeCardERC1155.deployed();
 
   console.log("PokeCardERC1155 deployed to:", PokeCardERC1155.address);
+
+  // We get the contract to deploy
+  const factory1 = await ethers.getContractFactory("PokeCardERC721");
+  const PokeCardERC721 = await factory1.deploy();
+
+  await PokeCardERC721.deployed();
+
+  console.log("PokeCardERC721 deployed to:", PokeCardERC721.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -2,16 +2,22 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract PokeMarketPlace is
     ReentrancyGuardUpgradeable,
     IERC1155ReceiverUpgradeable,
+    IERC721ReceiverUpgradeable,
     OwnableUpgradeable
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -109,13 +115,15 @@ contract PokeMarketPlace is
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override returns (bool) {
-        return interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId;
+        return
+            interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId ||
+            interfaceId == type(IERC721ReceiverUpgradeable).interfaceId;
     }
 
     function placeOrderForSell(
         uint256 tokenId,
         address nftContract,
-        uint16 copies,
+        uint16 copies, // = 0 means 721 NFT
         uint256 pricePerNFT,
         address paymentToken,
         uint256 endTime,
@@ -146,13 +154,21 @@ contract PokeMarketPlace is
             nftContract
         );
         orderNonce++;
-        IERC1155Upgradeable(nftContract).safeTransferFrom(
-            msg.sender,
-            address(this),
-            tokenId,
-            copies,
-            ""
-        );
+        if (copies == 0) {
+            IERC721Upgradeable(nftContract).safeTransferFrom(
+                msg.sender,
+                address(this),
+                tokenId
+            );
+        } else {
+            IERC1155Upgradeable(nftContract).safeTransferFrom(
+                msg.sender,
+                address(this),
+                tokenId,
+                copies,
+                ""
+            );
+        }
         emit OrderCreated(
             orderNonce - 1,
             tokenId,
@@ -171,13 +187,21 @@ contract PokeMarketPlace is
         Order storage _order = order[orderId];
         require(_order.seller == msg.sender, "Invalid request");
 
-        IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
-            address(this),
-            msg.sender,
-            _order.tokenId,
-            _order.copies,
-            ""
-        );
+        if (_order.copies == 0) {
+            IERC721Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                msg.sender,
+                _order.tokenId
+            );
+        } else {
+            IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                msg.sender,
+                _order.tokenId,
+                _order.copies,
+                ""
+            );
+        }
 
         if (_order.saleType == SaleType.OpenForOffers) {
             returnAmountToRemainingBidder(
@@ -192,19 +216,26 @@ contract PokeMarketPlace is
 
     function buyNow(
         uint256 orderId,
-        uint16 copies
+        uint16 copies // copies = 0 if 721 token
     ) external payable nonReentrant {
         Order storage _order = order[orderId];
         require(_order.saleType == SaleType.BuyNow, "Invalid Sales type");
+        if (_order.copies == 0) {
+            require(copies == 0, "Invalid NFT type / copies");
+        }
         bool isNative = _order.paymentToken == address(0);
 
-        uint256 totalAmount = _order.price * copies;
+        uint256 totalAmount = _order.price * (copies == 0 ? 1 : copies);
+        uint256 feeValue = (platformFees * totalAmount) / 10000;
+        address sellerAddress = _order.seller;
+
         if (isNative) {
             require(msg.value >= totalAmount, "Not sufficient funds");
-        }
-        uint256 feeValue = (platformFees * totalAmount) / 10000;
-
-        if (!isNative) {
+            (bool success, ) = payable(sellerAddress).call{
+                value: totalAmount - feeValue
+            }("");
+            require(success, "Transfer Failed");
+        } else {
             IERC20Upgradeable ERC20Interface = IERC20Upgradeable(
                 _order.paymentToken
             );
@@ -219,31 +250,33 @@ contract PokeMarketPlace is
                 totalAmount - feeValue
             );
         }
-        IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
-            address(this),
-            msg.sender,
-            _order.tokenId,
-            copies,
-            ""
-        );
-        address sellerAddress = _order.seller;
+        if (_order.copies == 0) {
+            IERC721Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                msg.sender,
+                _order.tokenId
+            );
+        } else {
+            IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                msg.sender,
+                _order.tokenId,
+                copies,
+                ""
+            );
+        }
+
         if (_order.copies == copies) {
             delete (order[orderId]);
         } else {
             order[orderId].copies -= copies;
-        }
-        if (isNative) {
-            (bool success, ) = payable(sellerAddress).call{
-                value: totalAmount - feeValue
-            }("");
-            require(success, "Transfer Failed");
         }
         emit OrderPurchased(orderId, msg.sender, copies);
     }
 
     function placeOfferForOrder(
         uint256 orderId,
-        uint16 copies,
+        uint16 copies, // 0 for 721
         uint256 pricePerNFT
     ) external payable {
         Order storage _order = order[orderId];
@@ -254,24 +287,24 @@ contract PokeMarketPlace is
 
         require(_order.endTime > block.timestamp, "Order expired ");
         require(_order.price <= pricePerNFT, "Invalid Price");
-        require(copies <= _order.copies && copies > 0, "not enough quantity");
+        require(copies <= _order.copies, "not enough quantity");
 
         uint256 totalBids = bids[orderId].length;
 
-        uint256 totalAmount = pricePerNFT * copies;
+        uint256 totalAmount = pricePerNFT * (copies == 0 ? 1 : copies);
         if (isNative) {
             require(msg.value >= totalAmount, "not enough balance");
         } else {
             IERC20Upgradeable ERC20Interface = IERC20Upgradeable(
                 _order.paymentToken
             );
-            uint256 approvedAmount = ERC20Interface.allowance(
-                msg.sender,
-                address(this)
-            );
-            uint256 balance = ERC20Interface.balanceOf(msg.sender);
-            require(approvedAmount >= totalAmount, "allowance issue");
-            require(balance >= totalAmount, "not enough balance");
+            // uint256 approvedAmount = ERC20Interface.allowance(
+            //     msg.sender,
+            //     address(this)
+            // );
+            // uint256 balance = ERC20Interface.balanceOf(msg.sender);
+            // require(approvedAmount >= totalAmount, "allowance issue");
+            // require(balance >= totalAmount, "not enough balance");
             ERC20Interface.safeTransferFrom(
                 msg.sender,
                 address(this),
@@ -298,7 +331,7 @@ contract PokeMarketPlace is
         );
     }
 
-    function acceptBid(uint256 orderId, uint256 bidId) external {
+    function acceptBid(uint256 orderId, uint256 bidId) external nonReentrant {
         Order storage _order = order[orderId];
         Bid storage _bid = bids[orderId][bidId];
         require(_order.copies >= _bid.copies, "Nft not available");
@@ -307,21 +340,34 @@ contract PokeMarketPlace is
 
         bool isNative = _order.paymentToken == address(0);
 
-        uint256 totalAmount = _bid.price * _bid.copies;
+        uint256 totalAmount = _bid.price * (_bid.copies == 0 ? 1 : _bid.copies);
         uint256 feeValue = (platformFees * totalAmount) / 10000;
 
-        IERC1155Upgradeable(_order.nftContract).setApprovalForAll(
-            _bid.bidder,
-            true
-        );
+        if (_order.copies == 0) {
+            IERC721Upgradeable(_order.nftContract).setApprovalForAll(
+                _bid.bidder,
+                true
+            );
 
-        IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
-            address(this),
-            _bid.bidder,
-            _order.tokenId,
-            _bid.copies,
-            ""
-        );
+            IERC721Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                _bid.bidder,
+                _order.tokenId
+            );
+        } else {
+            IERC1155Upgradeable(_order.nftContract).setApprovalForAll(
+                _bid.bidder,
+                true
+            );
+
+            IERC1155Upgradeable(_order.nftContract).safeTransferFrom(
+                address(this),
+                _bid.bidder,
+                _order.tokenId,
+                _bid.copies,
+                ""
+            );
+        }
         if (!isNative) {
             safeTransferAmount(
                 _order.paymentToken,
@@ -347,7 +393,7 @@ contract PokeMarketPlace is
         uint256 orderId,
         uint256 bidId,
         bool isReject
-    ) external {
+    ) external nonReentrant {
         Order storage _order = order[orderId];
         Bid storage _bid = bids[orderId][bidId];
 
@@ -359,12 +405,6 @@ contract PokeMarketPlace is
 
         require(_bid.status == BidStatus.Placed, "cant process");
 
-        bool isNative = _order.paymentToken == address(0);
-
-        uint256 totalAmount = _bid.price * _bid.copies;
-        if (!isNative) {
-            safeTransferAmount(_order.paymentToken, msg.sender, totalAmount);
-        }
         if (isReject) {
             bids[orderId][bidId].status = BidStatus.Rejected;
             emit BidRejected(orderId, bidId);
@@ -372,54 +412,68 @@ contract PokeMarketPlace is
             bids[orderId][bidId].status = BidStatus.Withdraw;
             emit BidWithdraw(orderId, bidId);
         }
+
+        bool isNative = _order.paymentToken == address(0);
+
+        uint256 totalAmount = _bid.price * (_bid.copies == 0 ? 1 : _bid.copies);
+
         if (isNative) {
             (bool success, ) = payable(_bid.bidder).call{value: totalAmount}(
                 ""
             );
             require(success, "Transfer Failed");
+        } else {
+            safeTransferAmount(_order.paymentToken, msg.sender, totalAmount);
         }
     }
 
-    function bulkBuy(
-        uint256[] calldata orderIds,
-        uint256[] calldata amounts
-    ) external payable OnlyAdminOwner {
-        uint256 payAmount = 0;
-        uint256[] memory tokenIds = new uint256[](orderIds.length);
-        address[] memory tokenContract = new address[](orderIds.length);
-        bool amountSupplyIssue;
-        for (uint8 i = 0; i < orderIds.length; i++) {
-            uint256 id = orderIds[i];
-            Order storage _order = order[orderIds[i]];
-            tokenIds[i] = order[id].tokenId;
-            payAmount += (order[id].price * amounts[i]);
-            if (amounts[i] > order[id].copies) {
-                amountSupplyIssue = true;
-            }
-            tokenContract[i] = _order.nftContract;
-            _order.copies -= uint16(amounts[i]);
-        }
-        require(
-            amountSupplyIssue == false && payAmount <= msg.value,
-            "Iv Amount"
-        );
+    // modifier OnlyAdminOwner() {
+    //     require(msg.sender == adminOwner, "Not Admin");
+    //     _;
+    // }
+    // function bulkBuy(
+    //     uint256[] calldata orderIds,
+    //     uint256[] calldata amounts
+    // ) external payable OnlyAdminOwner {
+    //     uint256 payAmount = 0;
+    //     uint256[] memory tokenIds = new uint256[](orderIds.length);
+    //     address[] memory tokenContract = new address[](orderIds.length);
+    //     bool amountSupplyIssue;
+    //     for (uint8 i = 0; i < orderIds.length; i++) {
+    //         uint256 id = orderIds[i];
+    //         Order storage _order = order[orderIds[i]];
+    //         tokenIds[i] = order[id].tokenId;
+    //         payAmount += (order[id].price * amounts[i]);
+    //         if (amounts[i] > order[id].copies) {
+    //             amountSupplyIssue = true;
+    //         }
+    //         tokenContract[i] = _order.nftContract;
+    //         _order.copies -= uint16(amounts[i]);
+    //     }
+    //     require(
+    //         amountSupplyIssue == false && payAmount <= msg.value,
+    //         "Iv Amount"
+    //     );
 
-        for (uint8 i = 0; i < tokenContract.length; i++) {
-            IERC1155Upgradeable(tokenContract[i]).safeTransferFrom(
-                address(this),
-                msg.sender,
-                tokenIds[i],
-                amounts[i],
-                ""
-            );
-        }
+    //     for (uint8 i = 0; i < tokenContract.length; i++) {
+    //         IERC1155Upgradeable(tokenContract[i]).safeTransferFrom(
+    //             address(this),
+    //             msg.sender,
+    //             tokenIds[i],
+    //             amounts[i],
+    //             ""
+    //         );
+    //     }
 
-        emit NFTBulkBuy(orderIds, amounts);
-    }
-
-    modifier OnlyAdminOwner() {
-        require(msg.sender == adminOwner, "Not Admin");
-        _;
+    //     emit NFTBulkBuy(orderIds, amounts);
+    // }
+    function safeTransferAmount(
+        address token,
+        address to,
+        uint256 amount
+    ) private {
+        IERC20Upgradeable ERC20Interface = IERC20Upgradeable(token);
+        ERC20Interface.safeTransfer(to, amount);
     }
 
     function withdrawMoney(
@@ -437,15 +491,6 @@ contract PokeMarketPlace is
         }
     }
 
-    function safeTransferAmount(
-        address token,
-        address to,
-        uint256 amount
-    ) private {
-        IERC20Upgradeable ERC20Interface = IERC20Upgradeable(token);
-        ERC20Interface.safeTransfer(to, amount);
-    }
-
     function returnAmountToRemainingBidder(
         uint256 orderId,
         bool isNative
@@ -453,8 +498,10 @@ contract PokeMarketPlace is
         Order storage _order = order[orderId];
         for (uint8 i = 0; i < bids[orderId].length; i++) {
             if (bids[orderId][i].status == BidStatus.Placed) {
-                uint256 amount = bids[orderId][i].copies *
-                    bids[orderId][i].price;
+                uint256 amount = (
+                    bids[orderId][i].copies == 0 ? 1 : bids[orderId][i].copies
+                ) * bids[orderId][i].price;
+
                 bids[orderId][i].status = BidStatus.Rejected;
                 if (isNative) {
                     (bool success, ) = payable(bids[orderId][i].bidder).call{
@@ -489,11 +536,11 @@ contract PokeMarketPlace is
     }
 
     function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
+        address,
+        address,
+        uint256[] calldata,
+        uint256[] calldata,
+        bytes calldata
     ) external pure override returns (bytes4) {
         return (
             bytes4(
@@ -501,6 +548,17 @@ contract PokeMarketPlace is
                     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"
                 )
             )
+        );
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return (
+            bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))
         );
     }
 }

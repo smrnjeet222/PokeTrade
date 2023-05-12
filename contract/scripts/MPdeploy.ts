@@ -1,26 +1,16 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const factory = await ethers.getContractFactory("PokeMarketPlace");
-  const PokeMarketPlace = await factory.deploy();
-  await PokeMarketPlace.deployed();
-
-  const pokeMarketProxy = await ethers.getContractFactory("MarketPlaceUpgradeableProxy");
   const [admin, owner] = await ethers.getSigners();
 
+  const factory = await ethers.getContractFactory("PokeMarketPlace");
+
+  const PokeMarketPlace = await upgrades.deployProxy(factory, [100, admin.address]); // 0.01% fee
+
+  await PokeMarketPlace.deployed();
+
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
-
-  const vaultInterface = new ethers.utils.Interface([
-      "function initialize( uint256 _platformFees, address _admin) external"
-  ])
-
-  let data = vaultInterface.encodeFunctionData("initialize", [ 100, admin.address]);
-  console.log(PokeMarketPlace.address, owner.address, data);
-  const pokeProxy = await pokeMarketProxy.deploy(PokeMarketPlace.address, owner.address, data);
-  await pokeProxy.deployed();
-
-
-  console.log("Proxy deployed to:", pokeProxy.address);
+  // 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -1,9 +1,11 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract TestToken is ERC20 {
+contract MyToken is ERC20, ERC20Burnable, Ownable {
     uint8 decimals_;
 
     constructor(
@@ -14,16 +16,8 @@ contract TestToken is ERC20 {
         decimals_ = _decimals;
     }
 
-    function mint(uint _amount) external {
-        _mint(msg.sender, _amount);
-    }
-
-    function burn(uint _amount) external {
-        _burn(msg.sender, _amount);
-    }
-
-    function deposit() external payable {
-        _mint(msg.sender, msg.value);
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
     }
 
     function decimals() public view override returns (uint8) {

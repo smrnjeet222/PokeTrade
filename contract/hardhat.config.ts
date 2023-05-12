@@ -53,7 +53,7 @@ const config: HardhatUserConfig & {
     disambiguatePaths: false,
     runOnCompile: true,
     strict: true,
-    only: [':Poke', 'TestToken'],
+    only: [':Poke', 'MyToken'],
   },
   paths: {
     sources: "./contracts",
@@ -67,7 +67,7 @@ const config: HardhatUserConfig & {
     },
     mumbai: {
       url: "https://matic-mumbai.chainstacklabs.com",
-      accounts: [process.env.ADMIN_PRIVATE_KEY ?? "", process.env.OWNER_PRIVATE_KEY ?? ""]
+      accounts: [process.env.OWNER_PRIVATE_KEY ?? "", process.env.ADMIN_PRIVATE_KEY ?? "", ]
     }
   },
   etherscan: {
