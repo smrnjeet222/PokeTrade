@@ -14,11 +14,9 @@ contract PokeCardERC721 is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
 
     constructor() ERC721("Pokemon Cards", "POKE") {}
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+    function safeMint(address to, uint _id) public onlyOwner {
+        _safeMint(to, _id);
+        _setTokenURI(_id, "");
     }
 
     function _burn(

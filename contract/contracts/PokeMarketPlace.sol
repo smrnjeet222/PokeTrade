@@ -379,6 +379,7 @@ contract PokeMarketPlace is
         _order.copies = _order.copies - _bid.copies;
         if (_order.copies == 0) {
             returnAmountToRemainingBidder(orderId, isNative);
+            delete order[orderId];
         }
         if (isNative) {
             (bool success, ) = payable(_order.seller).call{
