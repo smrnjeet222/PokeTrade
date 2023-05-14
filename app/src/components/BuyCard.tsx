@@ -7,7 +7,8 @@ import Countdown from "react-countdown";
 import { getCustomIpfsUrl } from "../utils/ipfs";
 import NFT_ABI from "../contracts/PokeCardERC1155.json";
 import { useAccount } from "wagmi";
-import { MARKETPLACE } from "../contracts";
+import { MARKETPLACE, PPT } from "../contracts";
+import { PPTicon } from "../App";
 
 export type NftData = {
   name: string;
@@ -45,9 +46,7 @@ function BuyNowTab({ nft, nftName }: any) {
         signer
       );
 
-      const buyTx = await marketPlaceContract.buyNow(nft.id, buyingQuantity, {
-        value: new Decimal(nft.price).mul(buyingQuantity).toString(),
-      });
+      const buyTx = await marketPlaceContract.buyNow(nft.id, 0);
       await buyTx.wait();
       setBuyingState({ loading: false, error: null, hash: buyTx.hash });
     } catch (err) {
@@ -68,6 +67,7 @@ function BuyNowTab({ nft, nftName }: any) {
         </label>
         <input
           type="number"
+          readOnly
           disabled={!address}
           min={1}
           step={1}
@@ -88,12 +88,7 @@ function BuyNowTab({ nft, nftName }: any) {
             Total amount to pay:&nbsp;&nbsp;
           </span>
           <span className="">
-            <svg viewBox="0 0 38.4 33.5" className="w-4 h-4">
-              <path
-                fill="#8247E5"
-                d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3 c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-              />
-            </svg>
+            <PPTicon size={24} />
           </span>
           <span>
             {new Decimal(nft.price)
@@ -320,12 +315,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
               </label>
               <label className="input-group">
                 <span className="">
-                  <svg viewBox="0 0 38.4 33.5" className="w-4 h-4">
-                    <path
-                      fill="#8247E5"
-                      d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3 c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-                    />
-                  </svg>
+                  <PPTicon />
                 </span>
                 <input
                   type="number"
@@ -352,7 +342,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
               </label>
             </div>
             <br />
-            <div className="form-control gap-3">
+            {/* <div className="form-control gap-3">
               <label className="flex items-baseline gap-2 font-medium">
                 Quantity <span className="text-xs">(max : {nft.copies})</span>
               </label>
@@ -378,12 +368,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                   Total amount to pay:&nbsp;&nbsp;
                 </span>
                 <span className="">
-                  <svg viewBox="0 0 38.4 33.5" className="w-4 h-4">
-                    <path
-                      fill="#8247E5"
-                      d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3 c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-                    />
-                  </svg>
+                  <PPTicon size={24} />
                 </span>
                 <span>
                   {new Decimal(buyBid)
@@ -391,7 +376,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                     .toString()}
                 </span>
               </label>
-            </div>
+            </div> */}
             <br />
             <button
               disabled={buyingState.loading}
@@ -410,12 +395,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                   <th className="normal-case">Bidder</th>
                   <th className="flex gap-2 items-center normal-case">
                     Price
-                    <svg viewBox="0 0 38.4 33.5" className="w-3 h-3">
-                      <path
-                        fill="#8247E5"
-                        d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3   c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-                      />
-                    </svg>
+                    <PPTicon size={16}/>
                   </th>
                   <th className="normal-case">Copies</th>
                   <th className="normal-case text-center">Actions</th>
@@ -595,7 +575,7 @@ function BuyCard({ nft }: any) {
         console.error("tokenUri doesn't exist", nft.nftContract, tokenId);
         return;
       }
-      const ipfsUrl = getCustomIpfsUrl(nftUrl);
+      const ipfsUrl = nftUrl;
 
       try {
         const response = await axios.get(ipfsUrl);
@@ -647,10 +627,10 @@ function BuyCard({ nft }: any) {
       />
 
       <div
-        className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
+        className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md pb-[5.8rem]
       hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-base-300 "
       >
-        <div
+        {/* <div
           className="bg-base-100 bg-opacity-50 backdrop-blur-sm
         absolute top-0 right-0 text-center p-1 rounded-bl-xl border-l border-b border-base-300
         flex items-center"
@@ -664,12 +644,9 @@ function BuyCard({ nft }: any) {
           </svg>
 
           <span className="text-lg mx-2">&nbsp;{nft.copies}</span>
-        </div>
-        <figure className="min-h-[20rem] max-h-[26rem]">
-          <img
-            src={getCustomIpfsUrl(nftData.image) ?? ""}
-            className="object-cover"
-          />
+        </div> */}
+        <figure className="aspect-square">
+          <img src={nftData.image ?? ""} className="object-cover" />
         </figure>
 
         <div
@@ -704,16 +681,11 @@ function BuyCard({ nft }: any) {
               <div className="divider h-1 m-0 opacity-30" />
             </>
           )}
-          <div className="flex justify-between items-center gap-2">
+          <div className="flex justify-between items-end gap-2">
             <div className="max-w-[50%] flex-1">
               <p className="text-xs">Price :</p>
-              <div className="flex gap-2 items-center mx-1">
-                <svg viewBox="0 0 38.4 33.5" className="w-5 h-5">
-                  <path
-                    fill="#8247E5"
-                    d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3   c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-                  />
-                </svg>
+              <div className="flex gap-2 items-center m-1 mb-0">
+                <PPTicon size={24} />
                 <span className="text-lg font-semibold proportional-nums truncate">
                   {new Decimal(nft.price ?? 0)
                     .div(new Decimal(10).pow(18))

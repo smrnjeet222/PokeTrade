@@ -4,8 +4,10 @@ import { Contract, ContractInterface } from "ethers";
 import { Fragment, useEffect, useState } from "react";
 import { getCustomIpfsUrl } from "../utils/ipfs";
 import { useAccount } from "wagmi";
-import { MARKETPLACE } from "../contracts";
+import { MARKETPLACE, PPT } from "../contracts";
 import Decimal from "decimal.js";
+import { PokeMarketPlace } from "../types";
+import { PPTicon } from "../App";
 
 export type NftData = {
   name: string;
@@ -67,16 +69,16 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         MARKETPLACE.ADDRESS,
         MARKETPLACE.ABI as ContractInterface,
         signer
-      );
+      ) as PokeMarketPlace;
       let price = new Decimal(sellPrice);
       price = price.mul(new Decimal(10).pow(18));
 
       const sellTx = await marketPlaceContract.placeOrderForSell(
         tokenId,
         contract,
-        nftQuantity.toString(),
+        "0",
         price.toString(),
-        "0x0000000000000000000000000000000000000000",
+        PPT,
         "0",
         "0"
       );
@@ -100,12 +102,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         </label>
         <label className="input-group">
           <span className="">
-            <svg viewBox="0 0 38.4 33.5" className="w-4 h-4">
-              <path
-                fill="#8247E5"
-                d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3 c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-              />
-            </svg>
+            <PPTicon />
           </span>
           <input
             type="number"
@@ -119,7 +116,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         </label>
       </div>
       <br />
-      <div className="form-control gap-1">
+      {/* <div className="form-control gap-1">
         <label className="flex items-baseline gap-2 font-medium">
           Quantity <span className="text-xs">(max : {nftBalance})</span>
         </label>
@@ -139,7 +136,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
           className="input input-bordered w-full"
         />
       </div>
-      <br />
+      <br /> */}
       <button
         disabled={isSelling}
         className="retro-btn flex-1 bg-white w-full disabled:loading"
@@ -184,17 +181,17 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         MARKETPLACE.ADDRESS,
         MARKETPLACE.ABI as ContractInterface,
         signer
-      );
+      ) as PokeMarketPlace;
       let price = new Decimal(sellPrice);
       price = price.mul(new Decimal(10).pow(18));
 
       const sellTx = await marketPlaceContract.placeOrderForSell(
         tokenId,
         contract,
-        nftQuantity.toString(),
+        "0",
         price.toString(),
-        "0x0000000000000000000000000000000000000000",
-        Date.parse(endTime)/100,
+        PPT,
+        Date.parse(endTime) / 100,
         "1"
       );
       await sellTx.wait();
@@ -215,14 +212,9 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         <label className="flex items-baseline gap-2 font-medium">
           Minimum Bid Price <span className="text-xs">(per NFT)</span>
         </label>
-        <label className="input-group input-group-sm">
+        <label className="input-group input-group-md">
           <span className="">
-            <svg viewBox="0 0 38.4 33.5" className="w-4 h-4">
-              <path
-                fill="#8247E5"
-                d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3 c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7   c0-0.8-0.4-1.6-1.2-2.1l-8-4.7c-0.7-0.4-1.6-0.4-2.4,0L1.2,5C0.4,5.4,0,6.2,0,7v9.4c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l5.5-3.2l3.8-2.2l5.5-3.2c0.7-0.4,1.6-0.4,2.4,0l4.3,2.5c0.7,0.4,1.2,1.2,1.2,2.1v5c0,0.8-0.4,1.6-1.2,2.1   L29,28.8c-0.7,0.4-1.6,0.4-2.4,0l-4.3-2.5c-0.7-0.4-1.2-1.2-1.2-2.1V21l-3.8,2.2v3.3c0,0.8,0.4,1.6,1.2,2.1l8.1,4.7   c0.7,0.4,1.6,0.4,2.4,0l8.1-4.7c0.7-0.4,1.2-1.2,1.2-2.1V17c0-0.8-0.4-1.6-1.2-2.1L29,10.2z"
-              />
-            </svg>
+            <PPTicon />
           </span>
           <input
             type="number"
@@ -231,12 +223,12 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
             value={sellPrice}
             onChange={(event) => setSellPrice(Number(event.target.value))}
             placeholder="Enter min price for one item"
-            className="input input-sm input-bordered w-full"
+            className="input input-md input-bordered w-full"
           />
         </label>
       </div>
       <br />
-      <div className="form-control gap-1">
+      {/* <div className="form-control gap-1">
         <label className="flex items-baseline gap-2 font-medium">
           Quantity <span className="text-xs">(max : {nftBalance})</span>
         </label>
@@ -255,7 +247,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
           className="input input-sm input-bordered w-full"
         />
       </div>
-      <br />
+      <br /> */}
       <div className="form-control gap-1">
         <label className="flex items-baseline gap-2 font-medium">
           Bid End Date/Time <span className="text-xs">(TimeZone is Local)</span>
@@ -401,44 +393,9 @@ function SellModal({
   );
 }
 
-function SellCard({ nftBalance, tokenId, contract, abi }: any) {
+function SellCard({ nftData, contract, abi }: any) {
   const { address, connector } = useAccount();
   const [isOpen, setIsOpen] = useState(false);
-  const [nftData, setNftData] = useState<NftData>({
-    name: "",
-    description: "",
-    image: "",
-  });
-
-  useEffect(() => {
-    if (!tokenId) return;
-
-    (async () => {
-      if (!connector) return;
-      const signer = await connector.getSigner();
-      const nftContract = new Contract(
-        contract,
-        abi as ContractInterface,
-        signer
-      );
-
-      try {
-        const nftUrl: string = await nftContract.tokenURI(tokenId as string);
-        if (!tokenId || !nftUrl) {
-          console.error("tokenUri doesn't exist", contract, tokenId);
-          return;
-        }
-        const ipfsUrl = getCustomIpfsUrl(nftUrl);
-
-        const response = await axios.get(ipfsUrl);
-        const nftData = response.data as NftData;
-        setNftData(nftData);
-      } catch (err) {
-        console.error("IPFS fail: ", err);
-        return;
-      }
-    })();
-  }, [connector, tokenId]);
 
   function closeModal() {
     setIsOpen(false);
@@ -455,8 +412,8 @@ function SellCard({ nftBalance, tokenId, contract, abi }: any) {
         isOpen={isOpen}
         closeModal={closeModal}
         nft={nftData}
-        nftBalance={nftBalance}
-        tokenId={tokenId}
+        nftBalance={nftData.balance}
+        tokenId={nftData.tokenId}
         contract={contract}
         abi={abi}
       />
@@ -464,22 +421,22 @@ function SellCard({ nftBalance, tokenId, contract, abi }: any) {
       {/* Card  */}
       <div
         className="card card-compact overflow-hidden card-bordered bg-base-300 col-span-1 relative rounded-lg shadow-md
-      hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-base-300"
+        pb-[4.5rem] hover:shadow-lg hover:cursor-pointer transition-shadow hover:border-base-300"
       >
-        <figure className="min-h-[20rem] max-h-[26rem]">
-          <img src={getCustomIpfsUrl(nftData.image)} className="object-cover" />
+        <figure className="aspect-square">
+          <img src={nftData.image} className="object-cover" />
         </figure>
         <div
           className="card-body w-full !p-4 !pt-2 !gap-1 absolute bg-base-100 
         bg-opacity-70 bottom-0 backdrop-blur-sm "
         >
           <h2 className="card-title items-baseline">
-            <span className="text-xs">#{tokenId}&nbsp;</span>
+            <span className="text-xs">#{nftData.tokenId}&nbsp;</span>
             {nftData.name}
           </h2>
-          <h4 className="text-sm">
+          {/* <h4 className="text-sm">
             Quantity : <span className="font-semibold">{nftBalance}</span>
-          </h4>
+          </h4> */}
           <div className="flex gap-4 justify-between">
             <button
               onClick={openModal}

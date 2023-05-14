@@ -4,26 +4,6 @@ import { useAccount } from "wagmi";
 import BuyOrderGrid from "../components/BuyOrderGrid";
 
 const Home = () => {
-  const {
-    address,
-    connector,
-    isConnecting,
-    isDisconnected,
-    isConnected,
-  } = useAccount();
-
-  if (isConnecting)
-    return (
-      <div className="container text-center m-auto my-4 text-4xl">
-        Connecting...
-      </div>
-    );
-  if (isDisconnected)
-    return (
-      <div className="container text-center m-auto my-4 text-4xl">
-        Disconnected
-      </div>
-    );
   return (
     <div className="container m-auto">
       <div className="flex justify-between items-center mb-12 mt-6">
@@ -40,13 +20,11 @@ export default Home;
 const GET_OPEN_ORDERS = gql`
   query GetOpenOrders {
     orders(
-      first: 50
       orderBy: startTime
       orderDirection: desc
       where: {
-        copies_gt: 0
         status: true
-        nftContract_in: ["0x8f8a6e7eaf05eb72f9e8a8c351e00da5a54ce305"]
+        nftContract_in: ["0x75362d43640cfe536520448ba2407ada56cd64dc"]
       }
     ) {
       id

@@ -27,7 +27,7 @@ function Navbar({ isSticky }: any) {
         </div>
         <div className="navbar-center">
           <a className="uppercase text-4xl tracking-wider font-black">
-            PokeTrade
+            PoPTrade
           </a>
         </div>
         <div className="navbar-end">
