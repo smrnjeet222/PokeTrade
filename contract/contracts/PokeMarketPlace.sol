@@ -21,7 +21,6 @@ contract PokeMarketPlace is
     OwnableUpgradeable
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    address payable public adminOwner;
 
     struct Order {
         uint256 tokenId;
@@ -90,11 +89,7 @@ contract PokeMarketPlace is
     event BidAccepted(uint256 indexed orderId, uint256 bidId, uint16 copies);
     event NFTBulkBuy(uint256[] orderIds, uint256[] copies);
 
-    function initialize(
-        uint256 _platformFees,
-        address _admin
-    ) external initializer {
-        adminOwner = payable(_admin);
+    function initialize(uint256 _platformFees) external initializer {
         platformFees = _platformFees;
         __Ownable_init();
     }
@@ -108,7 +103,7 @@ contract PokeMarketPlace is
     }
 
     function setPlatformFees(uint256 fee) external onlyOwner {
-        require(fee <= 5000, "High fee");
+        require(fee <= 50000, "High fee");
         platformFees = fee;
     }
 
@@ -428,46 +423,6 @@ contract PokeMarketPlace is
         }
     }
 
-    // modifier OnlyAdminOwner() {
-    //     require(msg.sender == adminOwner, "Not Admin");
-    //     _;
-    // }
-    // function bulkBuy(
-    //     uint256[] calldata orderIds,
-    //     uint256[] calldata amounts
-    // ) external payable OnlyAdminOwner {
-    //     uint256 payAmount = 0;
-    //     uint256[] memory tokenIds = new uint256[](orderIds.length);
-    //     address[] memory tokenContract = new address[](orderIds.length);
-    //     bool amountSupplyIssue;
-    //     for (uint8 i = 0; i < orderIds.length; i++) {
-    //         uint256 id = orderIds[i];
-    //         Order storage _order = order[orderIds[i]];
-    //         tokenIds[i] = order[id].tokenId;
-    //         payAmount += (order[id].price * amounts[i]);
-    //         if (amounts[i] > order[id].copies) {
-    //             amountSupplyIssue = true;
-    //         }
-    //         tokenContract[i] = _order.nftContract;
-    //         _order.copies -= uint16(amounts[i]);
-    //     }
-    //     require(
-    //         amountSupplyIssue == false && payAmount <= msg.value,
-    //         "Iv Amount"
-    //     );
-
-    //     for (uint8 i = 0; i < tokenContract.length; i++) {
-    //         IERC1155Upgradeable(tokenContract[i]).safeTransferFrom(
-    //             address(this),
-    //             msg.sender,
-    //             tokenIds[i],
-    //             amounts[i],
-    //             ""
-    //         );
-    //     }
-
-    //     emit NFTBulkBuy(orderIds, amounts);
-    // }
     function safeTransferAmount(
         address token,
         address to,
@@ -482,13 +437,13 @@ contract PokeMarketPlace is
         address tokenAddress
     ) external onlyOwner {
         if (tokenAddress == address(0)) {
-            payable(adminOwner).transfer(amount);
+            payable(owner()).transfer(amount);
         } else {
             require(tokensSupport[tokenAddress], "unsupported token address");
             IERC20Upgradeable ERC20Interface = IERC20Upgradeable(tokenAddress);
             uint256 balance = ERC20Interface.balanceOf(msg.sender);
             require(balance >= amount, "balance Insufficient");
-            ERC20Interface.safeTransfer(adminOwner, amount);
+            ERC20Interface.safeTransfer(owner(), amount);
         }
     }
 

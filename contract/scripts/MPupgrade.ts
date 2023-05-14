@@ -1,9 +1,11 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const [_owner, admin] = await ethers.getSigners();
+  const [owner, admin] = await ethers.getSigners();
+  console.log("Owner => ", owner.address);
+  console.log("Admin => ", admin.address);
   const factory = await ethers.getContractFactory("PokeMarketPlace");
-  const PokeMarketPlace = await upgrades.deployProxy(factory, [[100, admin.address]]);
+  const PokeMarketPlace = await upgrades.upgradeProxy("0xFaAad54447612ae63C5f60140Be9FD7D961e57A1", factory);
   await PokeMarketPlace.deployed();
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
 }
@@ -14,3 +16,18 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+// import { run } from "hardhat"
+
+// async function verify(contractAddress: string, args: never[]) {
+//     try {
+//         await run("verify:verify", {
+//             address: contractAddress,
+//             constructorArgument: args,
+//         })
+//     } catch (e) {
+//         console.log(e)
+//     }
+// }
+
+// verify("0x8D4130F21bEc854182BeF4AE70CcF0F906Ee58B9", [])
