@@ -176,6 +176,19 @@ export class Order extends Entity {
     this.set("status", Value.fromBoolean(value));
   }
 
+  get nftType(): string {
+    let value = this.get("nftType");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set nftType(value: string) {
+    this.set("nftType", Value.fromString(value));
+  }
+
   get bids(): Array<string> {
     let value = this.get("bids");
     if (!value || value.kind == ValueKind.NULL) {

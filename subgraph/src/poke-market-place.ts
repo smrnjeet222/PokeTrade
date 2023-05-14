@@ -27,6 +27,7 @@ export function handleOrderCreate(event: OrderCreatedEvent): void {
     OrderInfo.paymentToken = event.params.paymentToken.toHex();
     OrderInfo.nftContract = event.params.nftContract.toHex();
     OrderInfo.status = true;
+    OrderInfo.nftType = event.params.copies === 0 ? "ERC721" : "ERC1155"
     OrderInfo.save();
   }
 }

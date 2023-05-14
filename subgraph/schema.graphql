@@ -10,6 +10,11 @@
 #   Withdraw
 # }
 
+enum NftType {
+  ERC1155
+  ERC721
+}
+
 type Order @entity {
   id: ID!
   tokenId: BigInt!
@@ -22,6 +27,7 @@ type Order @entity {
   paymentToken: String!
   nftContract: String!
   status: Boolean!
+  nftType: NftType!
   bids: [Bid!]! @derivedFrom(field: "order")
 }
 
