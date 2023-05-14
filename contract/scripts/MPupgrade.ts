@@ -5,7 +5,7 @@ async function main() {
   console.log("Owner => ", owner.address);
   console.log("Admin => ", admin.address);
   const factory = await ethers.getContractFactory("PokeMarketPlace");
-  const PokeMarketPlace = await upgrades.upgradeProxy("0xFaAad54447612ae63C5f60140Be9FD7D961e57A1", factory);
+  const PokeMarketPlace = await upgrades.upgradeProxy("0x5c8235448844795153373bCb454E809d85f8411a", factory);
   await PokeMarketPlace.deployed();
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
 }

@@ -9,7 +9,7 @@
     "test": "hardhat test",
     "deployMP-mumbai": "hardhat run --network mumbai scripts/MPdeploy.ts",
     "upgradeMP-mumbai": "hardhat run --network mumbai scripts/MPupgrade.ts",
-    "verify": "hardhat verify --network mumbai 0xFaAad54447612ae63C5f60140Be9FD7D961e57A1"
+    "verify": "hardhat verify --network mumbai 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -17,8 +17,8 @@
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@openzeppelin/hardhat-upgrades": "^1.24.0",
     "@typechain/ethers-v5": "^10.2.0",
     "@typechain/hardhat": "^6.1.5",

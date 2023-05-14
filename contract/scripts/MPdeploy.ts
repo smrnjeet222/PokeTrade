@@ -8,15 +8,15 @@ async function main() {
 
   const factory = await ethers.getContractFactory("PokeMarketPlace");
 
-  const PokeMarketPlace = await upgrades.deployProxy(factory, [0, admin.address]); // 0.00% fee
+  const PokeMarketPlace = await upgrades.deployProxy(factory, [0]); // 0.00% fee
 
   await PokeMarketPlace.deployed();
 
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
-  // 0xFaAad54447612ae63C5f60140Be9FD7D961e57A1
+  // 0x5c8235448844795153373bCb454E809d85f8411a
 
-  // implementation: 0xF48Fd17433648C7c9021B71E392aBfE46f539113
-  // proxy: 0xFaAad54447612ae63C5f60140Be9FD7D961e57A1
+  // implementation: 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a
+  // proxy: 0x5c8235448844795153373bCb454E809d85f8411a
 
 }
 
