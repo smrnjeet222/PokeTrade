@@ -28,7 +28,7 @@ describe("marketPlace", function () {
     const factory_MP = await ethers.getContractFactory("PokeMarketPlace");
     PokeMarketPlace = await factory_MP.deploy();
     await PokeMarketPlace.deployed();
-    const iniTx = await PokeMarketPlace.initialize(0, owner.address);
+    const iniTx = await PokeMarketPlace.initialize(0);
     await iniTx.wait();
     //  Add Support 
     await PokeCardERC721.setApprovalForAll(PokeMarketPlace.address, true);

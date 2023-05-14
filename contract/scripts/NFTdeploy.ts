@@ -14,20 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const factory = await ethers.getContractFactory("PokeCardERC1155");
-  const PokeCardERC1155 = await factory.deploy();
+  const factory = await ethers.getContractFactory("Cybergirl");
+  const Cybergirl = await factory.deploy();
 
-  await PokeCardERC1155.deployed();
+  await Cybergirl.deployed();
 
-  console.log("PokeCardERC1155 deployed to:", PokeCardERC1155.address);
-
-  // We get the contract to deploy
-  const factory1 = await ethers.getContractFactory("PokeCardERC721");
-  const PokeCardERC721 = await factory1.deploy();
-
-  await PokeCardERC721.deployed();
-
-  console.log("PokeCardERC721 deployed to:", PokeCardERC721.address);
+  console.log("Cybergirl deployed to:", Cybergirl.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
