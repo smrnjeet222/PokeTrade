@@ -24,6 +24,7 @@ const GET_OPEN_ORDERS = gql`
       orderDirection: desc
       where: {
         status: true
+        nftType: ERC721
         nftContract_in: ["0x75362d43640cfe536520448ba2407ada56cd64dc"]
       }
     ) {

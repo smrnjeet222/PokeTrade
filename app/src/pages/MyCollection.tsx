@@ -6,8 +6,7 @@ import NFT_ABI from "../contracts/PokeCardERC1155.json";
 import SellCard from "../components/SellCard";
 
 const MyCollection = () => {
-  const { address, connector, isConnecting, isDisconnected, isConnected } =
-    useAccount();
+  const { address, connector, isConnected } = useAccount();
 
   const [userTokens, setUserTokens] = useState<any>({});
   const [uiState, setUiState] = useState<any>({

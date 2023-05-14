@@ -32,13 +32,13 @@ const Layout = (props: { children: ReactNode }) => {
 
   if (isConnecting)
     return (
-      <div className="container text-center m-auto my-4 text-4xl">
+      <div className="container text-center m-auto my-4 pt-16 text-4xl">
         Connecting...
       </div>
     );
   if (isDisconnected || !connector)
     return (
-      <div className="container text-center m-auto my-4 text-4xl">
+      <div className="container text-center m-auto my-4 pt-16 text-4xl">
         Disconnected
       </div>
     );
