@@ -2,7 +2,7 @@ import { Contract, ContractInterface } from "ethers";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getCustomIpfsUrl } from "../utils/ipfs";
-import NFT_ABI from "../contracts/PokeCardERC1155.json";
+import NFT_ABI from "../contracts/Cybergirl.json";
 import SellCard from "../components/SellCard";
 
 const MyCollection = () => {
@@ -22,14 +22,17 @@ const MyCollection = () => {
         signer
       );
 
-      const tokenURI = await contract.tokenURI(tokenId);
-      const resp = await (await fetch(tokenURI)).json();
-      return {
-        ...resp,
-        tokenId,
-        balance: 1,
-        // name: resp.name.slice(0, -4),
-      };
+      const balance = Number(await contract.balanceOf(address));
+      if (balance) {
+        const tokenURI = await contract.tokenURI(tokenId);
+        const resp = await (await fetch(tokenURI)).json();
+        return {
+          ...resp,
+          tokenId,
+          balance: 1,
+          // name: resp.name.slice(0, -4),
+        };
+      }
     } catch (err) {
       console.error(err);
       setUiState((p: any) => ({

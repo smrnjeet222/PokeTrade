@@ -5,7 +5,7 @@ import { Contract, ContractInterface, ethers } from "ethers";
 import { Fragment, useEffect, useState } from "react";
 import Countdown from "react-countdown";
 import { getCustomIpfsUrl } from "../utils/ipfs";
-import NFT_ABI from "../contracts/PokeCardERC1155.json";
+import NFT_ABI from "../contracts/Cybergirl.json";
 import { useAccount } from "wagmi";
 import { MARKETPLACE, PPT } from "../contracts";
 import { PPTicon } from "../App";
