@@ -33,15 +33,14 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
     "acceptBid(uint256,uint256)": FunctionFragment;
     "addNftContractSupport(address)": FunctionFragment;
     "addTokenSupport(address)": FunctionFragment;
-    "adminOwner()": FunctionFragment;
     "bids(uint256,uint256)": FunctionFragment;
-    "bulkBuy(uint256[],uint256[])": FunctionFragment;
     "buyNow(uint256,uint16)": FunctionFragment;
     "cancelOrder(uint256)": FunctionFragment;
-    "initialize(uint256,address)": FunctionFragment;
+    "initialize(uint256)": FunctionFragment;
     "nftContracts(address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "order(uint256)": FunctionFragment;
     "orderNonce()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -62,15 +61,14 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
       | "acceptBid"
       | "addNftContractSupport"
       | "addTokenSupport"
-      | "adminOwner"
       | "bids"
-      | "bulkBuy"
       | "buyNow"
       | "cancelOrder"
       | "initialize"
       | "nftContracts"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
+      | "onERC721Received"
       | "order"
       | "orderNonce"
       | "owner"
@@ -99,16 +97,8 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "adminOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "bids",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bulkBuy",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "buyNow",
@@ -120,7 +110,7 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "nftContracts",
@@ -142,6 +132,15 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC721Received",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>
     ]
@@ -221,9 +220,7 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
     functionFragment: "addTokenSupport",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "adminOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bids", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "bulkBuy", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyNow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOrder",
@@ -240,6 +237,10 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155Received",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "order", data: BytesLike): Result;
@@ -287,8 +288,7 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "BidAccepted(uint256,uint256,uint256)": EventFragment;
-    "BidExpired(uint256,uint256)": EventFragment;
+    "BidAccepted(uint256,uint256,uint16)": EventFragment;
     "BidPlaced(uint256,uint256,address,uint16,uint256,uint256)": EventFragment;
     "BidRejected(uint256,uint256)": EventFragment;
     "BidWithdraw(uint256,uint256)": EventFragment;
@@ -301,7 +301,6 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "BidAccepted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BidExpired"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BidPlaced"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BidRejected"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BidWithdraw"): EventFragment;
@@ -316,25 +315,14 @@ export interface PokeMarketPlaceInterface extends utils.Interface {
 export interface BidAcceptedEventObject {
   orderId: BigNumber;
   bidId: BigNumber;
-  copies: BigNumber;
+  copies: number;
 }
 export type BidAcceptedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber],
+  [BigNumber, BigNumber, number],
   BidAcceptedEventObject
 >;
 
 export type BidAcceptedEventFilter = TypedEventFilter<BidAcceptedEvent>;
-
-export interface BidExpiredEventObject {
-  orderId: BigNumber;
-  bidId: BigNumber;
-}
-export type BidExpiredEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  BidExpiredEventObject
->;
-
-export type BidExpiredEventFilter = TypedEventFilter<BidExpiredEvent>;
 
 export interface BidPlacedEventObject {
   orderId: BigNumber;
@@ -498,8 +486,6 @@ export interface PokeMarketPlace extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    adminOwner(overrides?: CallOverrides): Promise<[string]>;
-
     bids(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -514,12 +500,6 @@ export interface PokeMarketPlace extends BaseContract {
       }
     >;
 
-    bulkBuy(
-      orderIds: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     buyNow(
       orderId: PromiseOrValue<BigNumberish>,
       copies: PromiseOrValue<BigNumberish>,
@@ -533,7 +513,6 @@ export interface PokeMarketPlace extends BaseContract {
 
     initialize(
       _platformFees: PromiseOrValue<BigNumberish>,
-      _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -543,11 +522,11 @@ export interface PokeMarketPlace extends BaseContract {
     ): Promise<[boolean]>;
 
     onERC1155BatchReceived(
-      operator: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -557,6 +536,14 @@ export interface PokeMarketPlace extends BaseContract {
       arg2: PromiseOrValue<BigNumberish>,
       arg3: PromiseOrValue<BigNumberish>,
       arg4: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -665,8 +652,6 @@ export interface PokeMarketPlace extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  adminOwner(overrides?: CallOverrides): Promise<string>;
-
   bids(
     arg0: PromiseOrValue<BigNumberish>,
     arg1: PromiseOrValue<BigNumberish>,
@@ -681,12 +666,6 @@ export interface PokeMarketPlace extends BaseContract {
     }
   >;
 
-  bulkBuy(
-    orderIds: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   buyNow(
     orderId: PromiseOrValue<BigNumberish>,
     copies: PromiseOrValue<BigNumberish>,
@@ -700,7 +679,6 @@ export interface PokeMarketPlace extends BaseContract {
 
   initialize(
     _platformFees: PromiseOrValue<BigNumberish>,
-    _admin: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -710,11 +688,11 @@ export interface PokeMarketPlace extends BaseContract {
   ): Promise<boolean>;
 
   onERC1155BatchReceived(
-    operator: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BigNumberish>[],
-    data: PromiseOrValue<BytesLike>,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>[],
+    arg3: PromiseOrValue<BigNumberish>[],
+    arg4: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -724,6 +702,14 @@ export interface PokeMarketPlace extends BaseContract {
     arg2: PromiseOrValue<BigNumberish>,
     arg3: PromiseOrValue<BigNumberish>,
     arg4: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  onERC721Received(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -832,8 +818,6 @@ export interface PokeMarketPlace extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    adminOwner(overrides?: CallOverrides): Promise<string>;
-
     bids(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -848,12 +832,6 @@ export interface PokeMarketPlace extends BaseContract {
       }
     >;
 
-    bulkBuy(
-      orderIds: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     buyNow(
       orderId: PromiseOrValue<BigNumberish>,
       copies: PromiseOrValue<BigNumberish>,
@@ -867,7 +845,6 @@ export interface PokeMarketPlace extends BaseContract {
 
     initialize(
       _platformFees: PromiseOrValue<BigNumberish>,
-      _admin: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -877,11 +854,11 @@ export interface PokeMarketPlace extends BaseContract {
     ): Promise<boolean>;
 
     onERC1155BatchReceived(
-      operator: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -891,6 +868,14 @@ export interface PokeMarketPlace extends BaseContract {
       arg2: PromiseOrValue<BigNumberish>,
       arg3: PromiseOrValue<BigNumberish>,
       arg4: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -982,7 +967,7 @@ export interface PokeMarketPlace extends BaseContract {
   };
 
   filters: {
-    "BidAccepted(uint256,uint256,uint256)"(
+    "BidAccepted(uint256,uint256,uint16)"(
       orderId?: PromiseOrValue<BigNumberish> | null,
       bidId?: null,
       copies?: null
@@ -992,15 +977,6 @@ export interface PokeMarketPlace extends BaseContract {
       bidId?: null,
       copies?: null
     ): BidAcceptedEventFilter;
-
-    "BidExpired(uint256,uint256)"(
-      orderId?: PromiseOrValue<BigNumberish> | null,
-      bidId?: null
-    ): BidExpiredEventFilter;
-    BidExpired(
-      orderId?: PromiseOrValue<BigNumberish> | null,
-      bidId?: null
-    ): BidExpiredEventFilter;
 
     "BidPlaced(uint256,uint256,address,uint16,uint256,uint256)"(
       orderId?: PromiseOrValue<BigNumberish> | null,
@@ -1116,18 +1092,10 @@ export interface PokeMarketPlace extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    adminOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
     bids(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    bulkBuy(
-      orderIds: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     buyNow(
@@ -1143,7 +1111,6 @@ export interface PokeMarketPlace extends BaseContract {
 
     initialize(
       _platformFees: PromiseOrValue<BigNumberish>,
-      _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1153,11 +1120,11 @@ export interface PokeMarketPlace extends BaseContract {
     ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
-      operator: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1167,6 +1134,14 @@ export interface PokeMarketPlace extends BaseContract {
       arg2: PromiseOrValue<BigNumberish>,
       arg3: PromiseOrValue<BigNumberish>,
       arg4: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1254,18 +1229,10 @@ export interface PokeMarketPlace extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    adminOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     bids(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    bulkBuy(
-      orderIds: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     buyNow(
@@ -1281,7 +1248,6 @@ export interface PokeMarketPlace extends BaseContract {
 
     initialize(
       _platformFees: PromiseOrValue<BigNumberish>,
-      _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1291,11 +1257,11 @@ export interface PokeMarketPlace extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
-      operator: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1305,6 +1271,14 @@ export interface PokeMarketPlace extends BaseContract {
       arg2: PromiseOrValue<BigNumberish>,
       arg3: PromiseOrValue<BigNumberish>,
       arg4: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
