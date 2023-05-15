@@ -1,6 +1,6 @@
 import { Dialog, Tab, Transition } from "@headlessui/react";
 import axios from "axios";
-import { Contract, ContractInterface } from "ethers";
+import { Contract, ContractInterface, ethers } from "ethers";
 import { Fragment, useEffect, useState } from "react";
 import { getCustomIpfsUrl } from "../utils/ipfs";
 import { useAccount } from "wagmi";
@@ -40,7 +40,7 @@ function classNames(...classes: any[]) {
 function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
   const { address, connector } = useAccount();
 
-  const [sellPrice, setSellPrice] = useState(0.1);
+  const [sellPrice, setSellPrice] = useState("0.5");
   const [nftQuantity, setNftQuantity] = useState(1);
   const [isSelling, setIsSelling] = useState(false);
 
@@ -78,7 +78,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         contract,
         "0",
         price.toString(),
-        PPT,
+        PPT.ADDRESS,
         "0",
         "0"
       );
@@ -109,9 +109,11 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
             min={0}
             step={0.1}
             value={sellPrice}
-            onChange={(event) => setSellPrice(Number(event.target.value))}
+            onChange={(event) => setSellPrice(event.target.value)}
             placeholder="Enter Price for one item"
-            className="input input-bordered w-full"
+            className={`input input-bordered w-full ${
+              !sellPrice && "focus:outline-red-400 border-red-500"
+            }`}
           />
         </label>
       </div>
@@ -138,7 +140,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
       </div>
       <br /> */}
       <button
-        disabled={isSelling}
+        disabled={isSelling || !sellPrice}
         className="retro-btn flex-1 bg-white w-full disabled:loading"
         onClick={handleFixedPriceSell}
       >
@@ -151,7 +153,7 @@ function FixedPriceTab({ nftBalance, tokenId, nft, contract, abi }: any) {
 function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
   const { address, connector } = useAccount();
 
-  const [sellPrice, setSellPrice] = useState(0.1);
+  const [sellPrice, setSellPrice] = useState("0.1");
   const [nftQuantity, setNftQuantity] = useState(1);
   const [endTime, setEndTime] = useState("");
   const [isSelling, setIsSelling] = useState(false);
@@ -190,7 +192,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         contract,
         "0",
         price.toString(),
-        PPT,
+        PPT.ADDRESS,
         Date.parse(endTime) / 100,
         "1"
       );
@@ -221,9 +223,11 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
             min={0}
             step={0.1}
             value={sellPrice}
-            onChange={(event) => setSellPrice(Number(event.target.value))}
+            onChange={(event) => setSellPrice(event.target.value)}
             placeholder="Enter min price for one item"
-            className="input input-md input-bordered w-full"
+            className={`input input-bordered w-full ${
+              !sellPrice && "focus:outline-red-400 border-red-500"
+            }`}
           />
         </label>
       </div>
@@ -269,7 +273,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
       </div>
       <br />
       <button
-        disabled={isSelling}
+        disabled={isSelling || !sellPrice}
         className="retro-btn bg-white w-full disabled:loading"
         onClick={handleOpenBidSell}
       >

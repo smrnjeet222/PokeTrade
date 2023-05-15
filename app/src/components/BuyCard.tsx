@@ -9,6 +9,7 @@ import NFT_ABI from "../contracts/Cybergirl.json";
 import { useAccount } from "wagmi";
 import { MARKETPLACE, PPT } from "../contracts";
 import { PPTicon } from "../App";
+import { PokeMarketPlace } from "../types";
 
 export type NftData = {
   name: string;
@@ -44,8 +45,24 @@ function BuyNowTab({ nft, nftName }: any) {
         MARKETPLACE.ADDRESS,
         MARKETPLACE.ABI as ContractInterface,
         signer
+      ) as PokeMarketPlace;
+      const pptContract = new Contract(
+        PPT.ADDRESS,
+        PPT.ABI as ContractInterface,
+        signer
       );
 
+      const allowance = await pptContract.allowance(
+        address,
+        MARKETPLACE.ADDRESS
+      );
+      if (allowance < nft.price) {
+        const approveSpend = await pptContract.approve(
+          MARKETPLACE.ADDRESS,
+          nft.price
+        );
+        await approveSpend.wait();
+      }
       const buyTx = await marketPlaceContract.buyNow(nft.id, 0);
       await buyTx.wait();
       setBuyingState({ loading: false, error: null, hash: buyTx.hash });
@@ -90,12 +107,7 @@ function BuyNowTab({ nft, nftName }: any) {
           <span className="">
             <PPTicon size={24} />
           </span>
-          <span>
-            {new Decimal(nft.price)
-              .div(new Decimal(10).pow(18))
-              .mul(buyingQuantity)
-              .toString()}
-          </span>
+          <span>{ethers.utils.formatEther(nft.price)}</span>
         </label>
       </div>
       <br />
@@ -113,9 +125,7 @@ function BuyNowTab({ nft, nftName }: any) {
 function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
   const { address, connector } = useAccount();
 
-  const [buyBid, setBidPrice] = useState(
-    new Decimal(nft.price).div(new Decimal(10).pow(18)).toNumber()
-  );
+  const [buyBid, setBidPrice] = useState(ethers.utils.formatEther(nft.price));
   const [buyingQuantity, setBuyingQuantity] = useState(1);
 
   const [buyingState, setBuyingState] = useState<any>({
@@ -138,17 +148,28 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         MARKETPLACE.ABI as ContractInterface,
         signer
       );
+      const pptContract = new Contract(
+        PPT.ADDRESS,
+        PPT.ABI as ContractInterface,
+        signer
+      );
 
-      let price = new Decimal(buyBid);
-      price = price.mul(new Decimal(10).pow(18));
+      const allowance = await pptContract.allowance(
+        address,
+        MARKETPLACE.ADDRESS
+      );
+      if (allowance < ethers.utils.parseEther(buyBid)) {
+        const approveSpend = await pptContract.approve(
+          MARKETPLACE.ADDRESS,
+          ethers.utils.parseEther(buyBid)
+        );
+        await approveSpend.wait();
+      }
 
       const buyTx = await marketPlaceContract.placeOfferForOrder(
         nft.id,
-        buyingQuantity,
-        price.toString(),
-        {
-          value: price.mul(new Decimal(buyingQuantity)).toString(),
-        }
+        0,
+        ethers.utils.parseEther(buyBid)
       );
       await buyTx.wait();
       setBuyingState({ loading: false, error: null, hash: buyTx.hash });
@@ -319,31 +340,24 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                 </span>
                 <input
                   type="number"
-                  min={new Decimal(nft.price)
-                    .div(new Decimal(10).pow(18))
-                    .toString()}
+                  min={ethers.utils.formatEther(nft.price)}
                   step={0.1}
                   value={buyBid}
-                  onChange={(event) =>
-                    setBidPrice(
-                      Math.max(
-                        Number(event.target.value),
-                        Number(
-                          new Decimal(nft.price)
-                            .div(new Decimal(10).pow(18))
-                            .toNumber()
-                        )
-                      )
-                    )
-                  }
-                  placeholder="Enter Price for one item"
-                  className="input input-bordered w-full"
+                  onChange={(event) => setBidPrice(event.target.value)}
+                  placeholder="Enter Price"
+                  className={`input input-bordered w-full
+                    ${
+                      ethers.utils
+                        .parseEther(!!buyBid ? buyBid : "0")
+                        .lt(nft.price) && "focus:outline-red-400 border-red-500"
+                    }
+                  `}
                 />
               </label>
             </div>
             <br />
-            {/* <div className="form-control gap-3">
-              <label className="flex items-baseline gap-2 font-medium">
+            <div className="form-control gap-3">
+              {/* <label className="flex items-baseline gap-2 font-medium">
                 Quantity <span className="text-xs">(max : {nft.copies})</span>
               </label>
               <input
@@ -362,24 +376,23 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                 }
                 placeholder="Total Quantity"
                 className="input input-bordered w-full"
-              />
+              /> */}
               <label className="flex items-center gap-2 font-medium">
                 <span className="text-sm font-normal">
-                  Total amount to pay:&nbsp;&nbsp;
+                  Minimum Bid Price :&nbsp;&nbsp;
                 </span>
                 <span className="">
                   <PPTicon size={24} />
                 </span>
-                <span>
-                  {new Decimal(buyBid)
-                    .mul(new Decimal(buyingQuantity))
-                    .toString()}
-                </span>
+                <span>{ethers.utils.formatEther(nft.price)}</span>
               </label>
-            </div> */}
+            </div>
             <br />
             <button
-              disabled={buyingState.loading}
+              disabled={
+                buyingState.loading ||
+                ethers.utils.parseEther(!!buyBid ? buyBid : "0").lt(nft.price)
+              }
               className="retro-btn bg-white w-full disabled:loading"
               onClick={handlePlaceOffer}
             >
@@ -395,9 +408,8 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                   <th className="normal-case">Bidder</th>
                   <th className="flex gap-2 items-center normal-case">
                     Price
-                    <PPTicon size={16}/>
+                    <PPTicon size={16} />
                   </th>
-                  <th className="normal-case">Copies</th>
                   <th className="normal-case text-center">Actions</th>
                 </tr>
               </thead>
@@ -418,7 +430,6 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
                           .div(new Decimal(10).pow(18))
                           .toString()}
                       </td>
-                      <td>{bid.copies}</td>
                       <td>
                         <div className="flex gap-2 justify-center">
                           {ethers.utils.getAddress(bid.bidder) ===
@@ -687,9 +698,7 @@ function BuyCard({ nft }: any) {
               <div className="flex gap-2 items-center m-1 mb-0">
                 <PPTicon size={24} />
                 <span className="text-lg font-semibold proportional-nums truncate">
-                  {new Decimal(nft.price ?? 0)
-                    .div(new Decimal(10).pow(18))
-                    .toString()}
+                  {ethers.utils.formatEther(nft.price)}
                 </span>
               </div>
             </div>

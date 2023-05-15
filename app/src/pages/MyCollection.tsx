@@ -1,4 +1,4 @@
-import { Contract, ContractInterface } from "ethers";
+import { Contract, ContractInterface, ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getCustomIpfsUrl } from "../utils/ipfs";
@@ -22,8 +22,10 @@ const MyCollection = () => {
         signer
       );
 
-      const balance = Number(await contract.balanceOf(address));
-      if (balance) {
+      const isOwner =
+        (await contract.ownerOf(tokenId)).toLowerCase() ===
+        address?.toLowerCase();
+      if (isOwner) {
         const tokenURI = await contract.tokenURI(tokenId);
         const resp = await (await fetch(tokenURI)).json();
         return {

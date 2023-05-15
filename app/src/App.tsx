@@ -44,7 +44,7 @@ const Layout = (props: { children: ReactNode }) => {
     );
 
   return (
-    <div className={`container min-h-screen px-1 pt-16 mx-auto`}>
+    <div className={`container px-1 pt-16 mx-auto`}>
       {props.children}
     </div>
   );
