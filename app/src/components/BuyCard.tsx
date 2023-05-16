@@ -735,7 +735,7 @@ function BuyCard({ nft }: any) {
                 >
                   Handle Order
                 </button>
-              ) : Date.now() / 100 > nft.endTime ? (
+              ) : Date.now() / 1000 > nft.endTime ? (
                 <button
                   className="btn btn-sm btn-warning border-warning-focus normal-case"
                   onClick={() => {
