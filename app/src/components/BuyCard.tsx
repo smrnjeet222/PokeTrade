@@ -325,7 +325,7 @@ function OpenForOffersTab({ nft, nftName, onlyBids }: any) {
         <div className="flex m-2 justify-between items-baseline">
           <span className="text-xs">Bid End Time</span>
           <span className="text-lg font-medium">
-            {new Date(Number(nft.endTime * 100)).toLocaleString()}
+            {new Date(Number(nft.endTime * 1000)).toLocaleString()}
           </span>
         </div>
         <Tab.Panel className="mt-4">
@@ -571,6 +571,8 @@ function BuyCard({ nft }: any) {
     image: "",
   });
 
+
+  
   useEffect(() => {
     (async () => {
       if (!connector) return;
@@ -683,7 +685,7 @@ function BuyCard({ nft }: any) {
                 <p className="text-xs">Bidding Ends :</p>
                 <Countdown
                   key={nft.id}
-                  date={Number(nft.endTime * 100)}
+                  date={Number(nft.endTime * 1000)}
                   zeroPadDays={2}
                   autoStart
                   renderer={renderer}
