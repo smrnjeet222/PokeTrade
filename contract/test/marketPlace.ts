@@ -188,7 +188,7 @@ describe("marketPlace", function () {
             0,
             ethers.utils.parseEther("0.9"),
             NativeAddress,
-            new Date().getTime() + 86400000 / 100,
+            new Date().getTime() + 86400000 / 1000,
             1
           );
           const receipt = await tx.wait();

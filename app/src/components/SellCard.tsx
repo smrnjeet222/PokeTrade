@@ -194,7 +194,7 @@ function OpenBidTab({ nftBalance, tokenId, nft, contract, abi }: any) {
         nftQuantity.toString(),
         price.toString(),
         "0x0000000000000000000000000000000000000000",
-        Date.parse(endTime)/100,
+        Date.parse(endTime) / 1000,
         "1"
       );
       await sellTx.wait();
