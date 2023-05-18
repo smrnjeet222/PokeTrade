@@ -189,6 +189,23 @@ export class Order extends Entity {
     this.set("nftType", Value.fromString(value));
   }
 
+  get buyer(): string | null {
+    let value = this.get("buyer");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set buyer(value: string | null) {
+    if (!value) {
+      this.unset("buyer");
+    } else {
+      this.set("buyer", Value.fromString(<string>value));
+    }
+  }
+
   get bids(): Array<string> {
     let value = this.get("bids");
     if (!value || value.kind == ValueKind.NULL) {

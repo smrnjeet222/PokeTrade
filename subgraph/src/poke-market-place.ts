@@ -52,6 +52,7 @@ export function handleOrderPurchase(event: OrderPurchasedEvent): void {
     const purchase = new Purchase(orderId + "-" + order.copies.toString() + "-" + event.params.copies.toString());
     order.status = !!(order.copies - event.params.copies);
     order.copies -= event.params.copies;
+    order.buyer = event.params.buyer.toHex();
     order.save();
     purchase.copies = event.params.copies;
     purchase.buyer = event.params.buyer.toHex();
@@ -88,6 +89,7 @@ export function handleBidAccepted(event: BidAcceptedEvent): void {
     const purchase = new Purchase(orderId + "-" + order.copies.toString() + "-" + event.params.copies.toString());
     order.status = !!(order.copies - event.params.copies);
     order.copies -= event.params.copies;
+    order.buyer = bid.bidder;
     order.save();
     purchase.copies = event.params.copies;
     purchase.buyer = bid.bidder;

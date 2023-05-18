@@ -28,6 +28,7 @@ type Order @entity {
   nftContract: String!
   status: Boolean!
   nftType: NftType!
+  buyer: String
   bids: [Bid!]! @derivedFrom(field: "order")
 }
 

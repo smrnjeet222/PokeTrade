@@ -431,21 +431,6 @@ export class PokeMarketPlace extends ethereum.SmartContract {
     return new PokeMarketPlace("PokeMarketPlace", address);
   }
 
-  adminOwner(): Address {
-    let result = super.call("adminOwner", "adminOwner():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_adminOwner(): ethereum.CallResult<Address> {
-    let result = super.tryCall("adminOwner", "adminOwner():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   bids(param0: BigInt, param1: BigInt): PokeMarketPlace__bidsResult {
     let result = super.call(
       "bids",
@@ -512,21 +497,21 @@ export class PokeMarketPlace extends ethereum.SmartContract {
   }
 
   onERC1155BatchReceived(
-    operator: Address,
-    from: Address,
-    ids: Array<BigInt>,
-    values: Array<BigInt>,
-    data: Bytes
+    param0: Address,
+    param1: Address,
+    param2: Array<BigInt>,
+    param3: Array<BigInt>,
+    param4: Bytes
   ): Bytes {
     let result = super.call(
       "onERC1155BatchReceived",
       "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes):(bytes4)",
       [
-        ethereum.Value.fromAddress(operator),
-        ethereum.Value.fromAddress(from),
-        ethereum.Value.fromUnsignedBigIntArray(ids),
-        ethereum.Value.fromUnsignedBigIntArray(values),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromUnsignedBigIntArray(param2),
+        ethereum.Value.fromUnsignedBigIntArray(param3),
+        ethereum.Value.fromBytes(param4)
       ]
     );
 
@@ -534,21 +519,21 @@ export class PokeMarketPlace extends ethereum.SmartContract {
   }
 
   try_onERC1155BatchReceived(
-    operator: Address,
-    from: Address,
-    ids: Array<BigInt>,
-    values: Array<BigInt>,
-    data: Bytes
+    param0: Address,
+    param1: Address,
+    param2: Array<BigInt>,
+    param3: Array<BigInt>,
+    param4: Bytes
   ): ethereum.CallResult<Bytes> {
     let result = super.tryCall(
       "onERC1155BatchReceived",
       "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes):(bytes4)",
       [
-        ethereum.Value.fromAddress(operator),
-        ethereum.Value.fromAddress(from),
-        ethereum.Value.fromUnsignedBigIntArray(ids),
-        ethereum.Value.fromUnsignedBigIntArray(values),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromUnsignedBigIntArray(param2),
+        ethereum.Value.fromUnsignedBigIntArray(param3),
+        ethereum.Value.fromBytes(param4)
       ]
     );
     if (result.reverted) {
@@ -596,6 +581,49 @@ export class PokeMarketPlace extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(param2),
         ethereum.Value.fromUnsignedBigInt(param3),
         ethereum.Value.fromBytes(param4)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  onERC721Received(
+    param0: Address,
+    param1: Address,
+    param2: BigInt,
+    param3: Bytes
+  ): Bytes {
+    let result = super.call(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromUnsignedBigInt(param2),
+        ethereum.Value.fromBytes(param3)
+      ]
+    );
+
+    return result[0].toBytes();
+  }
+
+  try_onERC721Received(
+    param0: Address,
+    param1: Address,
+    param2: BigInt,
+    param3: Bytes
+  ): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(param0),
+        ethereum.Value.fromAddress(param1),
+        ethereum.Value.fromUnsignedBigInt(param2),
+        ethereum.Value.fromBytes(param3)
       ]
     );
     if (result.reverted) {
@@ -834,40 +862,6 @@ export class AddTokenSupportCall__Outputs {
   }
 }
 
-export class BulkBuyCall extends ethereum.Call {
-  get inputs(): BulkBuyCall__Inputs {
-    return new BulkBuyCall__Inputs(this);
-  }
-
-  get outputs(): BulkBuyCall__Outputs {
-    return new BulkBuyCall__Outputs(this);
-  }
-}
-
-export class BulkBuyCall__Inputs {
-  _call: BulkBuyCall;
-
-  constructor(call: BulkBuyCall) {
-    this._call = call;
-  }
-
-  get orderIds(): Array<BigInt> {
-    return this._call.inputValues[0].value.toBigIntArray();
-  }
-
-  get amounts(): Array<BigInt> {
-    return this._call.inputValues[1].value.toBigIntArray();
-  }
-}
-
-export class BulkBuyCall__Outputs {
-  _call: BulkBuyCall;
-
-  constructor(call: BulkBuyCall) {
-    this._call = call;
-  }
-}
-
 export class BuyNowCall extends ethereum.Call {
   get inputs(): BuyNowCall__Inputs {
     return new BuyNowCall__Inputs(this);
@@ -951,10 +945,6 @@ export class InitializeCall__Inputs {
 
   get _platformFees(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get _admin(): Address {
-    return this._call.inputValues[1].value.toAddress();
   }
 }
 
