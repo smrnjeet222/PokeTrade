@@ -459,6 +459,7 @@ contract PokeMarketPlace is
                 ) * bids[orderId][i].price;
 
                 bids[orderId][i].status = BidStatus.Rejected;
+                emit BidRejected(orderId, i);
                 if (isNative) {
                     (bool success, ) = payable(bids[orderId][i].bidder).call{
                         value: amount
