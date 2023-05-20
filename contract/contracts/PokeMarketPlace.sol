@@ -452,7 +452,7 @@ contract PokeMarketPlace is
         bool isNative
     ) private {
         Order storage _order = order[orderId];
-        for (uint8 i = 0; i < bids[orderId].length; i++) {
+        for (uint8 i = 0; i < bids[orderId].length; ++i) {
             if (bids[orderId][i].status == BidStatus.Placed) {
                 uint256 amount = (
                     bids[orderId][i].copies == 0 ? 1 : bids[orderId][i].copies

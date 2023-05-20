@@ -9,7 +9,7 @@
     "test": "hardhat test",
     "deployMP-mumbai": "hardhat run --network mumbai scripts/MPdeploy.ts",
     "upgradeMP-mumbai": "hardhat run --network mumbai scripts/MPupgrade.ts",
-    "verify": "hardhat verify --network mumbai 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a"
+    "verify": "hardhat verify --network mumbai 0xA817e4178AdF1eEE5f02cAA08c22415D480CBCe1"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

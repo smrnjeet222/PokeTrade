@@ -15,8 +15,9 @@ async function main() {
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
   // 0x5c8235448844795153373bCb454E809d85f8411a
 
-  // implementation: 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a
   // proxy: 0x5c8235448844795153373bCb454E809d85f8411a
+  // implementation - 1: 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a
+  // implementation - 2: 0xA817e4178AdF1eEE5f02cAA08c22415D480CBCe1  // bid event fix
 
 }
 
