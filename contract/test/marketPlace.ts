@@ -271,7 +271,7 @@ describe("marketPlace", function () {
             0,
             ethers.utils.parseEther("0.5"),
             erc20TestToken.address,
-            new Date().getTime() + 86400000 / 100,
+            ((new Date().getTime() + 86400000) / 1000).toFixed(0),
             1
           );
           const receipt = await tx.wait();

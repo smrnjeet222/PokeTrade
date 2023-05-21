@@ -220,6 +220,7 @@ contract PokeMarketPlace is
         uint16 copies // copies = 0 if 721 token
     ) external payable nonReentrant {
         Order storage _order = order[orderId];
+        require(_order.seller != address(0), "Invalid order request"); // if order is deleted
         require(
             _order.saleType == SaleType.BuyNow ||
                 _order.saleType == SaleType.OpenForOffers,
@@ -297,8 +298,8 @@ contract PokeMarketPlace is
 
         require(_order.seller != msg.sender, "Invalid request");
 
-        require(_order.endTime > block.timestamp, "Order expired ");
         if (_order.saleType == SaleType.Auction) {
+            require(_order.endTime > block.timestamp, "Order expired ");
             require(_order.price <= pricePerNFT, "Invalid Price");
         }
         require(copies <= _order.copies, "not enough quantity");
