@@ -1,10 +1,23 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { PokeCardERC1155, PokeMarketPlace, PokeCardERC721 } from "../typechain-types";
-import { Contract } from "ethers";
+import { PokeCardERC1155, PokeMarketPlace, PokeCardERC721, IERC165__factory, PokeCardERC721__factory } from "../typechain-types";
+import { Contract, utils } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 const NativeAddress = "0x0000000000000000000000000000000000000000";
+
+const getInterfaceID = (contractInterface: utils.Interface) => {
+  let interfaceID = ethers.constants.Zero;
+  const functions: string[] = Object.keys(contractInterface.functions);
+  for (let i = 0; i < functions.length; i++) {
+    interfaceID = interfaceID.xor(contractInterface.getSighash(functions[i]));
+  }
+  return interfaceID;
+}
+
+const iid = getInterfaceID(IERC165__factory.createInterface())
+  .xor(getInterfaceID(PokeCardERC721__factory.createInterface()))
+  .toHexString()
 
 describe("marketPlace", function () {
   let PokeCardERC1155: PokeCardERC1155, PokeCardERC721: PokeCardERC721, PokeMarketPlace: PokeMarketPlace, erc20TestToken: Contract, orderId: string;
@@ -43,6 +56,7 @@ describe("marketPlace", function () {
     expect(await PokeMarketPlace.tokensSupport(erc20TestToken.address)).to.equal(true);
   });
 
+  it.skip("Misc...", async function () { });
   describe('SaleType - BuyNow', function () {
     it("Cancel Order", async function () {
       await PokeCardERC721.safeMint(seller1.address, 0);  // #0

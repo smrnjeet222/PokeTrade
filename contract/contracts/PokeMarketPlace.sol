@@ -52,6 +52,7 @@ contract PokeMarketPlace is
 
     enum SaleType {
         BuyNow,
+        Auction,
         OpenForOffers
     }
 
@@ -87,7 +88,6 @@ contract PokeMarketPlace is
     event BidWithdraw(uint256 indexed orderId, uint256 bidId);
     event BidRejected(uint256 indexed orderId, uint256 bidId);
     event BidAccepted(uint256 indexed orderId, uint256 bidId, uint16 copies);
-    event NFTBulkBuy(uint256[] orderIds, uint256[] copies);
 
     function initialize(uint256 _platformFees) external initializer {
         platformFees = _platformFees;
@@ -107,6 +107,7 @@ contract PokeMarketPlace is
         platformFees = fee;
     }
 
+    // [ '0x4e2312e0', '0x150b7a02' ]
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override returns (bool) {
@@ -124,14 +125,16 @@ contract PokeMarketPlace is
         uint256 endTime,
         SaleType saleType
     ) external {
+        require(
+            saleType == SaleType.BuyNow ||
+                saleType == SaleType.Auction ||
+                saleType == SaleType.OpenForOffers,
+            "Invalid sale"
+        );
         require(pricePerNFT > 0, "Invalid price");
         require(
             nftContract != address(0) && nftContracts[nftContract],
             "Invalid NFT Contract"
-        );
-        require(
-            saleType == SaleType.BuyNow || saleType == SaleType.OpenForOffers,
-            "Invalid sale"
         );
         require(
             (paymentToken == address(0) || tokensSupport[paymentToken]),
@@ -198,7 +201,10 @@ contract PokeMarketPlace is
             );
         }
 
-        if (_order.saleType == SaleType.OpenForOffers) {
+        if (
+            _order.saleType == SaleType.Auction ||
+            _order.saleType == SaleType.OpenForOffers
+        ) {
             returnAmountToRemainingBidder(
                 orderId,
                 _order.paymentToken == address(0)
@@ -214,10 +220,13 @@ contract PokeMarketPlace is
         uint16 copies // copies = 0 if 721 token
     ) external payable nonReentrant {
         Order storage _order = order[orderId];
-        require(_order.saleType == SaleType.BuyNow, "Invalid Sales type");
-        if (_order.copies == 0) {
-            require(copies == 0, "Invalid NFT type / copies");
-        }
+        require(
+            _order.saleType == SaleType.BuyNow ||
+                _order.saleType == SaleType.OpenForOffers,
+            "Invalid Sales type"
+        );
+        require(_order.copies <= copies, "copies > liquidity");
+
         bool isNative = _order.paymentToken == address(0);
 
         uint256 totalAmount = _order.price * (copies == 0 ? 1 : copies);
@@ -262,6 +271,9 @@ contract PokeMarketPlace is
         }
 
         if (_order.copies == copies) {
+            if (_order.saleType == SaleType.OpenForOffers) {
+                returnAmountToRemainingBidder(orderId, isNative);
+            }
             delete (order[orderId]);
         } else {
             order[orderId].copies -= copies;
@@ -275,13 +287,20 @@ contract PokeMarketPlace is
         uint256 pricePerNFT
     ) external payable {
         Order storage _order = order[orderId];
+        require(
+            _order.saleType == SaleType.Auction ||
+                _order.saleType == SaleType.OpenForOffers,
+            "Invalid request"
+        );
         require(_order.seller != address(0), "Invalid order request");
         bool isNative = _order.paymentToken == address(0);
 
         require(_order.seller != msg.sender, "Invalid request");
 
         require(_order.endTime > block.timestamp, "Order expired ");
-        require(_order.price <= pricePerNFT, "Invalid Price");
+        if (_order.saleType == SaleType.Auction) {
+            require(_order.price <= pricePerNFT, "Invalid Price");
+        }
         require(copies <= _order.copies, "not enough quantity");
 
         uint256 totalBids = bids[orderId].length;

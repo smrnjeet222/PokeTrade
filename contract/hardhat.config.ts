@@ -1,12 +1,16 @@
 import * as dotenv from "dotenv";
 
-import { HardhatUserConfig, task } from "hardhat/config";
+import "@nomicfoundation/hardhat-verify";
 import "@openzeppelin/hardhat-upgrades";
 import "@typechain/hardhat";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
+import chai from "chai";
+import { solidity } from "ethereum-waffle";
 import "hardhat-contract-sizer";
-import "@nomicfoundation/hardhat-verify";
+import "hardhat-gas-reporter";
+import { HardhatUserConfig, task } from "hardhat/config";
+import "solidity-coverage";
+
+chai.use(solidity);
 
 
 dotenv.config();
