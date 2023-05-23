@@ -70,11 +70,16 @@ const config: HardhatUserConfig & {
     },
     mumbai: {
       url: "https://matic-mumbai.chainstacklabs.com",
-      accounts: [process.env.OWNER_PRIVATE_KEY ?? "", process.env.ADMIN_PRIVATE_KEY ?? "", ]
+      accounts: [process.env.OWNER_PRIVATE_KEY ?? "", process.env.ADMIN_PRIVATE_KEY ?? "",]
+    },
+    bsc: {
+      url: "https://data-seed-prebsc-1-s3.binance.org:8545/",
+      accounts: [process.env.OWNER_PRIVATE_KEY ?? "", process.env.ADMIN_PRIVATE_KEY ?? "",]
     }
   },
   etherscan: {
-    apiKey: process.env.POLYGONSCAN_API_KEY,
+    // apiKey: process.env.POLYGONSCAN_API_KEY,
+    apiKey: process.env.BSC_API_KEY,
   },
 };
 

@@ -7,9 +7,9 @@
     "local-node": "hardhat node",
     "deployMP-local": "hardhat run --network localhost scripts/MPdeploy.ts",
     "test": "hardhat test",
-    "deployMP-mumbai": "hardhat run --network mumbai scripts/MPdeploy.ts",
-    "upgradeMP-mumbai": "hardhat run --network mumbai scripts/MPupgrade.ts",
-    "verify": "hardhat verify --network mumbai 0xA817e4178AdF1eEE5f02cAA08c22415D480CBCe1"
+    "deployMP-bsc": "hardhat run --network bsc scripts/MPdeploy.ts",
+    "upgradeMP-bsc": "hardhat run --network bsc scripts/MPupgrade.ts",
+    "verify": "hardhat verify --network bsc 0xaf761ebf333f59d54b44fcb0d3cede52cb9fa437"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

@@ -15,9 +15,15 @@ async function main() {
   console.log("PokeMarketPlace deployed to:", PokeMarketPlace.address);
   // 0x5c8235448844795153373bCb454E809d85f8411a
 
+  // Polygon
   // proxy: 0x5c8235448844795153373bCb454E809d85f8411a
   // implementation - 1: 0xd630F9Ae4eF22DEa4bdaC8CefC062F7E859aC55a
   // implementation - 2: 0xA817e4178AdF1eEE5f02cAA08c22415D480CBCe1  // bid event fix
+  
+
+  // BSC
+  // proxy: 0x689cd8CFB185AF8Ac7f59C4BE854f43AbdF2AC59
+  // implementation - 1: 0xaf761ebf333f59d54b44fcb0d3cede52cb9fa437
 
 }
 

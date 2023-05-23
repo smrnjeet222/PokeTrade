@@ -1,0 +1,291 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x13D9759D0725d9516d2911eD7Bc5F9788BB2488B",
+    "txHash": "0x45b70bafde0403bcaaa1d6d88f0774d787453adaf2f3219cfcaab9daba7ee1b2"
+  },
+  "proxies": [
+    {
+      "address": "0x689cd8CFB185AF8Ac7f59C4BE854f43AbdF2AC59",
+      "txHash": "0x59a0a3e7d019f523eb806c71ebf3a7278809e3dda30942ec5092ff1acc302944",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "bcfab10eecdd8af4185546672c1e08083e941039f0ee75320e1a3755ee277cfd": {
+      "address": "0xaf761Ebf333F59D54b44fcb0d3ceDE52CB9Fa437",
+      "txHash": "0x171a00f6e5d419d8fec7529e0475d763f8fd0e6a45938554af31154e20eab890",
+      "layout": {
+        "solcVersion": "0.8.9",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "order",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_uint256,t_struct(Order)1446_storage)",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:45"
+          },
+          {
+            "label": "bids",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_mapping(t_uint256,t_array(t_struct(Bid)1458_storage)dyn_storage)",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:46"
+          },
+          {
+            "label": "nftContracts",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:47"
+          },
+          {
+            "label": "tokensSupport",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:48"
+          },
+          {
+            "label": "orderNonce",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_uint256",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:50"
+          },
+          {
+            "label": "platformFees",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_uint256",
+            "contract": "PokeMarketPlace",
+            "src": "contracts/PokeMarketPlace.sol:51"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(Bid)1458_storage)dyn_storage": {
+            "label": "struct PokeMarketPlace.Bid[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_enum(BidStatus)1490": {
+            "label": "enum PokeMarketPlace.BidStatus",
+            "members": [
+              "Placed",
+              "Accepted",
+              "Rejected",
+              "Withdraw"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(SaleType)1485": {
+            "label": "enum PokeMarketPlace.SaleType",
+            "members": [
+              "BuyNow",
+              "Auction",
+              "OpenForOffers"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_struct(Bid)1458_storage)dyn_storage)": {
+            "label": "mapping(uint256 => struct PokeMarketPlace.Bid[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Order)1446_storage)": {
+            "label": "mapping(uint256 => struct PokeMarketPlace.Order)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Bid)1458_storage": {
+            "label": "struct PokeMarketPlace.Bid",
+            "members": [
+              {
+                "label": "bidder",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "copies",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "0"
+              },
+              {
+                "label": "price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(BidStatus)1490",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(Order)1446_storage": {
+            "label": "struct PokeMarketPlace.Order",
+            "members": [
+              {
+                "label": "tokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "seller",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "copies",
+                "type": "t_uint16",
+                "offset": 20,
+                "slot": "2"
+              },
+              {
+                "label": "saleType",
+                "type": "t_enum(SaleType)1485",
+                "offset": 22,
+                "slot": "2"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "paymentToken",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "nftContract",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
