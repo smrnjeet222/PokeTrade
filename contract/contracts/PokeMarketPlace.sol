@@ -226,7 +226,7 @@ contract PokeMarketPlace is
                 _order.saleType == SaleType.OpenForOffers,
             "Invalid Sales type"
         );
-        require(_order.copies <= copies, "copies > liquidity");
+        require(_order.copies >= copies, "copies > liquidity");
 
         bool isNative = _order.paymentToken == address(0);
 

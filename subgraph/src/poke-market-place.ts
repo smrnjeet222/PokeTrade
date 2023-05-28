@@ -7,16 +7,50 @@ import {
   BidRejected as BidRejectedEvent,
   BidAccepted as BidAcceptedEvent,
 } from "../generated/PokeMarketPlace/PokeMarketPlace"
+import { ipfs, json } from "@graphprotocol/graph-ts";
+import {
+  NFT as NFTContract
+} from "../generated/PokeMarketPlace/NFT";
 
-import { Order, Bid, Purchase } from "../generated/schema"
+import { Order, Bid, Purchase, NftMeta } from "../generated/schema"
 
 export function handleOrderCreate(event: OrderCreatedEvent): void {
   const orderId = event.params.orderId.toString();
 
-  const order = Order.load(orderId);
+  const nftAddress = event.params.nftContract.toHex();
 
-  if (!order) {
-    const OrderInfo = new Order(orderId);
+  let OrderInfo = Order.load(orderId);
+  let NftMetaInfo = NftMeta.load(`${nftAddress}-${event.params.tokenId}`);
+  if (!NftMetaInfo) {
+    const nftContract = NFTContract.bind(event.params.nftContract);
+    const tokenUri = nftContract.tokenURI(event.params.tokenId);
+    if (tokenUri) {
+      NftMetaInfo = new NftMeta(`${nftAddress}-${event.params.tokenId}`);
+
+      NftMetaInfo.tokenId = event.params.tokenId;
+      NftMetaInfo.nftContract = nftAddress;
+      NftMetaInfo.tokenUri = tokenUri;
+
+      let data = ipfs.cat(tokenUri)
+      if (data) {
+        let value = json.fromBytes(data).toObject()
+        if (value) {
+          const name = value.get("name")
+          if (name) {
+            NftMetaInfo.name = name.toString();
+          }
+          const image = value.get("image")
+          if (image) {
+            NftMetaInfo.image = image.toString();
+          }
+        }
+        NftMetaInfo.save()
+      }
+    }
+  }
+
+  if (!OrderInfo) {
+    OrderInfo = new Order(orderId);
     OrderInfo.price = event.params.price;
     OrderInfo.seller = event.params.seller.toHex();
     OrderInfo.saleType = event.params.saleType;
@@ -28,8 +62,11 @@ export function handleOrderCreate(event: OrderCreatedEvent): void {
     OrderInfo.nftContract = event.params.nftContract.toHex();
     OrderInfo.status = true;
     OrderInfo.nftType = event.params.copies === 0 ? "ERC721" : "ERC1155"
-    OrderInfo.save();
+    if (NftMetaInfo) {
+      OrderInfo.nftMetadata = NftMetaInfo.id
+    }
   }
+  OrderInfo.save();
 }
 
 export function handleOrderCancel(event: OrderCancelledEvent): void {

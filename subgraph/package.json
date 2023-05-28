@@ -5,10 +5,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ nft-marketplace",
-    "create-local": "graph create --node http://localhost:8020/ nft-marketpklace",
-    "remove-local": "graph remove --node http://localhost:8020/ nft-marketpklace",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 nft-marketpklace",
+    "deploy": "graph deploy --product hosted-service smrnjeet222/pop-marketplace",
+    "create-local": "graph create --node http://localhost:8020/ pop-marketpklace",
+    "remove-local": "graph remove --node http://localhost:8020/ pop-marketpklace",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 pop-marketpklace",
     "test": "graph test"
   },
   "dependencies": {

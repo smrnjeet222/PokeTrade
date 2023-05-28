@@ -15,6 +15,15 @@ enum NftType {
   ERC721
 }
 
+type NftMeta @entity {
+  id: ID!
+  tokenId: BigInt!
+  nftContract: String!
+  tokenUri: String!
+  name: String
+  image: String
+}
+
 type Order @entity {
   id: ID!
   tokenId: BigInt!
@@ -29,6 +38,7 @@ type Order @entity {
   status: Boolean!
   nftType: NftType!
   buyer: String
+  nftMetadata: NftMeta
   bids: [Bid!]! @derivedFrom(field: "order")
 }
 
