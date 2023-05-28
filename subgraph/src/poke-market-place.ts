@@ -7,7 +7,7 @@ import {
   BidRejected as BidRejectedEvent,
   BidAccepted as BidAcceptedEvent,
 } from "../generated/PokeMarketPlace/PokeMarketPlace"
-import { ipfs, json } from "@graphprotocol/graph-ts";
+import { ipfs, json, log } from "@graphprotocol/graph-ts";
 import {
   NFT as NFTContract
 } from "../generated/PokeMarketPlace/NFT";
@@ -23,7 +23,12 @@ export function handleOrderCreate(event: OrderCreatedEvent): void {
   let NftMetaInfo = NftMeta.load(`${nftAddress}-${event.params.tokenId}`);
   if (!NftMetaInfo) {
     const nftContract = NFTContract.bind(event.params.nftContract);
+
     const tokenUri = nftContract.tokenURI(event.params.tokenId);
+    const tokenUriTry = nftContract.try_tokenURI(event.params.tokenId);
+    log.debug('Message to be displayed: {}, {}, {}',
+      [nftAddress.toString(), tokenUri.toString(), tokenUriTry.value]
+    );
     if (tokenUri) {
       NftMetaInfo = new NftMeta(`${nftAddress}-${event.params.tokenId}`);
 
@@ -44,8 +49,8 @@ export function handleOrderCreate(event: OrderCreatedEvent): void {
             NftMetaInfo.image = image.toString();
           }
         }
-        NftMetaInfo.save()
       }
+      NftMetaInfo.save()
     }
   }
 
